@@ -27,6 +27,29 @@ pub struct StyledPixelsIterator<C> {
     stroke_color: Option<C>,
 }
 
+#[cfg(feature = "async_draw")]
+use crate::draw_target::AsyncDrawTarget;
+#[cfg(feature = "async_draw")]
+use crate::primitives::styled::AsyncStyledDrawable;
+#[cfg(feature = "async_draw")]
+impl<C: PixelColor> AsyncStyledDrawable<PrimitiveStyle<C>> for Arc {
+    type Color = C;
+    type Output = ();
+
+    async fn draw_styled_async<D>(
+        &self,
+        style: &PrimitiveStyle<C>,
+        target: &mut D,
+    ) -> Result<Self::Output, D::Error>
+    where
+        D: AsyncDrawTarget<Color = C>,
+    {
+        target
+            .draw_iter_async(StyledPixelsIterator::new(self, style))
+            .await
+    }
+}
+
 impl<C: PixelColor> StyledPixelsIterator<C> {
     fn new(primitive: &Arc, style: &PrimitiveStyle<C>) -> Self {
         let circle = primitive.to_circle();
