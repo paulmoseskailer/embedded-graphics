@@ -59,6 +59,7 @@ impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Foreground<T::Color
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Background<T::Color>> {
     type Color = BinaryColor;
     type Error = T::Error;
@@ -103,6 +104,7 @@ impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Background<T::Color
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Both<T::Color>> {
     type Color = BinaryColor;
     type Error = T::Error;

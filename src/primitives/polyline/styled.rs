@@ -40,6 +40,7 @@ pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
     }
 }
 
+#[maybe_async::maybe_async]
 async fn draw_thick<D>(
     polyline: &Polyline<'_>,
     style: &PrimitiveStyle<D::Color>,
