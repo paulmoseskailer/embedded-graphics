@@ -102,11 +102,12 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Circle {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Circle {
     type Color = C;
     type Output = ();
 
-    fn draw_styled<D>(
+    async fn draw_styled<D>(
         &self,
         style: &PrimitiveStyle<C>,
         target: &mut D,
@@ -119,19 +120,21 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Circle {
                 for scanline in
                     StyledScanlines::new(&style.stroke_area(self), &style.fill_area(self))
                 {
-                    scanline.draw_stroke(target, stroke_color)?;
+                    scanline.draw_stroke(target, stroke_color).await?;
                 }
             }
             (Some(stroke_color), Some(fill_color)) => {
                 for scanline in
                     StyledScanlines::new(&style.stroke_area(self), &style.fill_area(self))
                 {
-                    scanline.draw_stroke_and_fill(target, stroke_color, fill_color)?;
+                    scanline
+                        .draw_stroke_and_fill(target, stroke_color, fill_color)
+                        .await?;
                 }
             }
             (None, Some(fill_color)) => {
                 for scanline in Scanlines::new(&style.fill_area(self)) {
-                    scanline.draw(target, fill_color)?;
+                    scanline.draw(target, fill_color).await?;
                 }
             }
             (None, None) => {}

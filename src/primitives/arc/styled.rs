@@ -69,11 +69,12 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Arc {
     type Color = C;
     type Output = ();
 
-    fn draw_styled<D>(
+    async fn draw_styled<D>(
         &self,
         style: &PrimitiveStyle<C>,
         target: &mut D,
@@ -81,7 +82,9 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Arc {
     where
         D: DrawTarget<Color = C>,
     {
-        target.draw_iter(StyledPixelsIterator::new(self, style))
+        target
+            .draw_iter(StyledPixelsIterator::new(self, style))
+            .await
     }
 }
 

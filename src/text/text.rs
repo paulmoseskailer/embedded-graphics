@@ -150,23 +150,22 @@ impl<S: TextRenderer> Text<'_, S> {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<S: TextRenderer> Drawable for Text<'_, S> {
     type Color = S::Color;
     type Output = Point;
 
-    fn draw<D>(&self, target: &mut D) -> Result<Point, D::Error>
+    async fn draw<D>(&self, target: &mut D) -> Result<Point, D::Error>
     where
         D: DrawTarget<Color = Self::Color>,
     {
         let mut next_position = self.position;
 
         for (line, position) in self.lines() {
-            next_position = self.character_style.draw_string(
-                line,
-                position,
-                self.text_style.baseline,
-                target,
-            )?;
+            next_position = self
+                .character_style
+                .draw_string(line, position, self.text_style.baseline, target)
+                .await?;
         }
 
         Ok(next_position)

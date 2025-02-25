@@ -222,6 +222,7 @@ impl<T> Transform for Image<'_, T> {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<'a, T> Drawable for Image<'a, T>
 where
     T: ImageDrawable,
@@ -229,12 +230,13 @@ where
     type Color = T::Color;
     type Output = ();
 
-    fn draw<D>(&self, display: &mut D) -> Result<Self::Output, D::Error>
+    async fn draw<D>(&self, display: &mut D) -> Result<Self::Output, D::Error>
     where
         D: DrawTarget<Color = Self::Color>,
     {
         self.image_drawable
             .draw(&mut display.translated(self.offset))
+            .await
     }
 }
 

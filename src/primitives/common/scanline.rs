@@ -137,7 +137,8 @@ impl Scanline {
     }
 
     /// Draws the scanline.
-    pub fn draw<T>(&self, target: &mut T, color: T::Color) -> Result<(), T::Error>
+    #[maybe_async::maybe_async]
+    pub async fn draw<T>(&self, target: &mut T, color: T::Color) -> Result<(), T::Error>
     where
         T: DrawTarget,
     {
@@ -147,10 +148,12 @@ impl Scanline {
 
         let width = (self.x.end - self.x.start) as u32;
 
-        target.fill_solid(
-            &Rectangle::new(Point::new(self.x.start, self.y), Size::new(width, 1)),
-            color,
-        )
+        target
+            .fill_solid(
+                &Rectangle::new(Point::new(self.x.start, self.y), Size::new(width, 1)),
+                color,
+            )
+            .await
     }
 }
 

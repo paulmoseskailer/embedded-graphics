@@ -48,6 +48,7 @@ pub struct MonoTextStyle<'a, C> {
     pub font: &'a MonoFont<'a>,
 }
 
+#[maybe_async::maybe_async]
 impl<'a, C> MonoTextStyle<'a, C>
 where
     C: PixelColor,
@@ -106,7 +107,7 @@ where
         })
     }
 
-    fn draw_decorations<D>(
+    async fn draw_decorations<D>(
         &self,
         width: u32,
         position: Point,
@@ -117,18 +118,18 @@ where
     {
         if let Some(color) = self.strikethrough_color.to_color(self.text_color) {
             let rect = self.font.strikethrough.to_rectangle(position, width);
-            target.fill_solid(&rect, color)?;
+            target.fill_solid(&rect, color).await?;
         }
 
         if let Some(color) = self.underline_color.to_color(self.text_color) {
             let rect = self.font.underline.to_rectangle(position, width);
-            target.fill_solid(&rect, color)?;
+            target.fill_solid(&rect, color).await?;
         }
 
         Ok(())
     }
 
-    fn draw_string_binary<D>(
+    async fn draw_string_binary<D>(
         &self,
         text: &str,
         position: Point,
@@ -141,21 +142,23 @@ where
             match element {
                 LineElement::Char(c) => {
                     let glyph = self.font.glyph(c);
-                    Image::new(&glyph, p).draw(&mut target)?;
+                    Image::new(&glyph, p).draw(&mut target).await?;
                 }
                 // Fill space between characters if background color is set.
                 LineElement::Spacing if self.font.character_spacing > 0 => {
                     if self.background_color.is_some() {
-                        target.fill_solid(
-                            &Rectangle::new(
-                                p,
-                                Size::new(
-                                    self.font.character_spacing,
-                                    self.font.character_size.height,
+                        target
+                            .fill_solid(
+                                &Rectangle::new(
+                                    p,
+                                    Size::new(
+                                        self.font.character_spacing,
+                                        self.font.character_size.height,
+                                    ),
                                 ),
-                            ),
-                            BinaryColor::Off,
-                        )?;
+                                BinaryColor::Off,
+                            )
+                            .await?;
                     }
                 }
                 LineElement::Spacing => {}
@@ -184,13 +187,14 @@ where
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C> TextRenderer for MonoTextStyle<'_, C>
 where
     C: PixelColor,
 {
     type Color = C;
 
-    fn draw_string<D>(
+    async fn draw_string<D>(
         &self,
         text: &str,
         position: Point,
@@ -203,21 +207,30 @@ where
         let position = position - Point::new(0, self.baseline_offset(baseline));
 
         let next = match (self.text_color, self.background_color) {
-            (Some(text_color), Some(background_color)) => self.draw_string_binary(
-                text,
-                position,
-                MonoFontDrawTarget::new(target, Both(text_color, background_color)),
-            )?,
-            (Some(text_color), None) => self.draw_string_binary(
-                text,
-                position,
-                MonoFontDrawTarget::new(target, Foreground(text_color)),
-            )?,
-            (None, Some(background_color)) => self.draw_string_binary(
-                text,
-                position,
-                MonoFontDrawTarget::new(target, Background(background_color)),
-            )?,
+            (Some(text_color), Some(background_color)) => {
+                self.draw_string_binary(
+                    text,
+                    position,
+                    MonoFontDrawTarget::new(target, Both(text_color, background_color)),
+                )
+                .await?
+            }
+            (Some(text_color), None) => {
+                self.draw_string_binary(
+                    text,
+                    position,
+                    MonoFontDrawTarget::new(target, Foreground(text_color)),
+                )
+                .await?
+            }
+            (None, Some(background_color)) => {
+                self.draw_string_binary(
+                    text,
+                    position,
+                    MonoFontDrawTarget::new(target, Background(background_color)),
+                )
+                .await?
+            }
             (None, None) => {
                 let dx = (self.font.character_size.width + self.font.character_spacing)
                     * text.chars().count() as u32;
@@ -228,13 +241,13 @@ where
 
         if next.x > position.x {
             let width = (next.x - position.x) as u32;
-            self.draw_decorations(width, position, target)?;
+            self.draw_decorations(width, position, target).await?;
         }
 
         Ok(next + Point::new(0, self.baseline_offset(baseline)))
     }
 
-    fn draw_whitespace<D>(
+    async fn draw_whitespace<D>(
         &self,
         width: u32,
         position: Point,
@@ -248,13 +261,18 @@ where
 
         if width != 0 {
             if let Some(background_color) = self.background_color {
-                target.fill_solid(
-                    &Rectangle::new(position, Size::new(width, self.font.character_size.height)),
-                    background_color,
-                )?;
+                target
+                    .fill_solid(
+                        &Rectangle::new(
+                            position,
+                            Size::new(width, self.font.character_size.height),
+                        ),
+                        background_color,
+                    )
+                    .await?;
             }
 
-            self.draw_decorations(width, position, target)?;
+            self.draw_decorations(width, position, target).await?;
         }
 
         Ok(position + Point::new(width.saturating_as(), self.baseline_offset(baseline)))

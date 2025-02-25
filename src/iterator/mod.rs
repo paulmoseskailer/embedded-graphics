@@ -29,13 +29,14 @@ where
 }
 
 /// Extension trait for pixel iterators.
+#[maybe_async::maybe_async(AFIT)]
 pub trait PixelIteratorExt<C>
 where
     Self: Sized,
     C: PixelColor,
 {
     /// Draws the pixel iterator to a draw target.
-    fn draw<D>(self, target: &mut D) -> Result<(), D::Error>
+    async fn draw<D>(self, target: &mut D) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = C>;
 
@@ -43,16 +44,17 @@ where
     fn translated(self, offset: Point) -> pixel::Translated<Self>;
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<I, C> PixelIteratorExt<C> for I
 where
     C: PixelColor,
     I: Iterator<Item = Pixel<C>>,
 {
-    fn draw<D>(self, target: &mut D) -> Result<(), D::Error>
+    async fn draw<D>(self, target: &mut D) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = C>,
     {
-        target.draw_iter(self)
+        target.draw_iter(self).await
     }
 
     fn translated(self, offset: Point) -> pixel::Translated<Self> {

@@ -69,11 +69,12 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Rectangle {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Rectangle {
     type Color = C;
     type Output = ();
 
-    fn draw_styled<D>(
+    async fn draw_styled<D>(
         &self,
         style: &PrimitiveStyle<C>,
         target: &mut D,
@@ -85,7 +86,7 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Rectangle {
 
         // Fill rectangle
         if let Some(fill_color) = style.fill_color {
-            target.fill_solid(&fill_area, fill_color)?;
+            target.fill_solid(&fill_area, fill_color).await?;
         }
 
         // Draw stroke
@@ -114,8 +115,8 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Rectangle {
                 Size::new(stroke_area.size.width, bottom_stroke_width),
             );
 
-            target.fill_solid(&top_border, stroke_color)?;
-            target.fill_solid(&bottom_border, stroke_color)?;
+            target.fill_solid(&top_border, stroke_color).await?;
+            target.fill_solid(&bottom_border, stroke_color).await?;
 
             if fill_area.size.height > 0 {
                 let left_border = Rectangle::new(
@@ -134,8 +135,8 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Rectangle {
                     0,
                 ));
 
-                target.fill_solid(&left_border, stroke_color)?;
-                target.fill_solid(&right_border, stroke_color)?;
+                target.fill_solid(&left_border, stroke_color).await?;
+                target.fill_solid(&right_border, stroke_color).await?;
             }
         }
 

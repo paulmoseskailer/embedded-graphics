@@ -198,6 +198,7 @@ const fn bytes_per_row(width: u32, bits_per_pixel: usize) -> usize {
     (width as usize * bits_per_pixel + 7) / 8
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<'a, C, O> ImageDrawable for ImageRaw<'a, C, O>
 where
     C: PixelColor,
@@ -206,19 +207,21 @@ where
 {
     type Color = C;
 
-    fn draw<D>(&self, target: &mut D) -> Result<(), D::Error>
+    async fn draw<D>(&self, target: &mut D) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = C>,
     {
         let row_skip = self.data_width() - self.size.width;
 
-        target.fill_contiguous(
-            &self.bounding_box(),
-            ContiguousPixels::new(self, self.size, 0, row_skip as usize),
-        )
+        target
+            .fill_contiguous(
+                &self.bounding_box(),
+                ContiguousPixels::new(self, self.size, 0, row_skip as usize),
+            )
+            .await
     }
 
-    fn draw_sub_image<D>(&self, target: &mut D, area: &Rectangle) -> Result<(), D::Error>
+    async fn draw_sub_image<D>(&self, target: &mut D, area: &Rectangle) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Self::Color>,
     {
@@ -237,10 +240,12 @@ where
         let initial_skip = area.top_left.y as usize * data_width + area.top_left.x as usize;
         let row_skip = data_width - area.size.width as usize;
 
-        target.fill_contiguous(
-            &Rectangle::new(Point::zero(), area.size),
-            ContiguousPixels::new(self, area.size, initial_skip, row_skip),
-        )
+        target
+            .fill_contiguous(
+                &Rectangle::new(Point::zero(), area.size),
+                ContiguousPixels::new(self, area.size, initial_skip, row_skip),
+            )
+            .await
     }
 }
 

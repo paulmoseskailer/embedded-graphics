@@ -19,6 +19,7 @@ circle-ci = { repository = "embedded-graphics/embedded-graphics", branch = "mast
 
 [dependencies]
 az = "1.1"
+maybe-async = "0.2"
 nalgebra = { version = "0.30.1", optional = true, default-features = false }
 defmt = { version = "0.3.2", optional = true}
 
@@ -27,5 +28,7 @@ embedded-graphics = { path = ".." }
 arrayvec = { version = "0.7.2", default-features = false }
 
 [features]
-default = []
+default = ["is_sync"]
+async_draw = []
+is_sync    = [ "maybe-async/is_sync" ]
 nalgebra_support = [ "nalgebra" ]

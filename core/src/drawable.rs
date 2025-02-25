@@ -64,6 +64,7 @@ use crate::{draw_target::DrawTarget, geometry::Point, pixelcolor::PixelColor};
 ///
 /// [`DrawTarget`]: crate::draw_target::DrawTarget
 /// [`draw_iter`]: crate::draw_target::DrawTarget::draw_iter
+#[maybe_async::maybe_async(AFIT)]
 pub trait Drawable {
     /// The pixel color type.
     type Color: PixelColor;
@@ -101,7 +102,7 @@ pub trait Drawable {
     type Output;
 
     /// Draw the graphics object using the supplied DrawTarget.
-    fn draw<D>(&self, target: &mut D) -> Result<Self::Output, D::Error>
+    async fn draw<D>(&self, target: &mut D) -> Result<Self::Output, D::Error>
     where
         D: DrawTarget<Color = Self::Color>;
 }
@@ -143,6 +144,7 @@ pub struct Pixel<C>(pub Point, pub C)
 where
     C: PixelColor;
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C> Drawable for Pixel<C>
 where
     C: PixelColor,
@@ -150,11 +152,11 @@ where
     type Color = C;
     type Output = ();
 
-    fn draw<D>(&self, target: &mut D) -> Result<Self::Output, D::Error>
+    async fn draw<D>(&self, target: &mut D) -> Result<Self::Output, D::Error>
     where
         D: DrawTarget<Color = C>,
     {
-        target.draw_iter(core::iter::once(*self))
+        target.draw_iter(core::iter::once(*self)).await
     }
 }
 

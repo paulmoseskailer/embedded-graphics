@@ -44,26 +44,27 @@ impl<T> OriginDimensions for SubImage<'_, T> {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<'a, T> ImageDrawable for SubImage<'a, T>
 where
     T: ImageDrawable,
 {
     type Color = T::Color;
 
-    fn draw<DT>(&self, target: &mut DT) -> Result<(), DT::Error>
+    async fn draw<DT>(&self, target: &mut DT) -> Result<(), DT::Error>
     where
         DT: DrawTarget<Color = Self::Color>,
     {
-        self.parent.draw_sub_image(target, &self.area)
+        self.parent.draw_sub_image(target, &self.area).await
     }
 
-    fn draw_sub_image<DT>(&self, target: &mut DT, area: &Rectangle) -> Result<(), DT::Error>
+    async fn draw_sub_image<DT>(&self, target: &mut DT, area: &Rectangle) -> Result<(), DT::Error>
     where
         DT: DrawTarget<Color = Self::Color>,
     {
         let area = area.translate(self.area.top_left);
 
-        self.parent.draw_sub_image(target, &area)
+        self.parent.draw_sub_image(target, &area).await
     }
 }
 

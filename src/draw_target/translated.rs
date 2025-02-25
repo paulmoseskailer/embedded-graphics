@@ -32,6 +32,7 @@ where
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<T> DrawTarget for Translated<'_, T>
 where
     T: DrawTarget,
@@ -39,29 +40,34 @@ where
     type Color = T::Color;
     type Error = T::Error;
 
-    fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+    async fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {
         self.parent
             .draw_iter(pixels.into_iter().translated(self.offset))
+            .await
     }
 
-    fn fill_contiguous<I>(&mut self, area: &Rectangle, colors: I) -> Result<(), Self::Error>
+    async fn fill_contiguous<I>(&mut self, area: &Rectangle, colors: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Self::Color>,
     {
         let area = area.translate(self.offset);
-        self.parent.fill_contiguous(&area, colors)
+        self.parent.fill_contiguous(&area, colors).await
     }
 
-    fn fill_solid(&mut self, area: &Rectangle, color: Self::Color) -> Result<(), Self::Error> {
+    async fn fill_solid(
+        &mut self,
+        area: &Rectangle,
+        color: Self::Color,
+    ) -> Result<(), Self::Error> {
         let area = area.translate(self.offset);
-        self.parent.fill_solid(&area, color)
+        self.parent.fill_solid(&area, color).await
     }
 
-    fn clear(&mut self, color: Self::Color) -> Result<(), Self::Error> {
-        self.parent.clear(color)
+    async fn clear(&mut self, color: Self::Color) -> Result<(), Self::Error> {
+        self.parent.clear(color).await
     }
 }
 

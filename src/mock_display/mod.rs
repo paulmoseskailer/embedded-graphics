@@ -697,6 +697,7 @@ where
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C> DrawTarget for MockDisplay<C>
 where
     C: PixelColor,
@@ -704,7 +705,7 @@ where
     type Color = C;
     type Error = core::convert::Infallible;
 
-    fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+    async fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {

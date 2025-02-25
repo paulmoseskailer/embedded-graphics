@@ -80,11 +80,12 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Triangle {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Triangle {
     type Color = C;
     type Output = ();
 
-    fn draw_styled<D>(
+    async fn draw_styled<D>(
         &self,
         style: &PrimitiveStyle<C>,
         target: &mut D,
@@ -112,7 +113,7 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Triangle {
                 let rect = line.to_rectangle();
 
                 if !rect.is_zero_sized() {
-                    target.fill_solid(&rect, color)?;
+                    target.fill_solid(&rect, color).await?;
                 }
             }
         }

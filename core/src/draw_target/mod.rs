@@ -278,6 +278,7 @@ use crate::{
 /// [`Dimensions`]: super::geometry::Dimensions
 /// [`OriginDimensions`]: super::geometry::OriginDimensions
 /// [`Error` type]: DrawTarget::Error
+#[maybe_async::maybe_async(AFIT)]
 pub trait DrawTarget: Dimensions {
     /// The pixel color type the targetted display supports.
     type Color: PixelColor;
@@ -299,7 +300,7 @@ pub trait DrawTarget: Dimensions {
     /// drawing method for a display that writes data to the hardware immediately. If possible, the
     /// other methods in this trait should be implemented to improve performance when rendering
     /// more contiguous pixel patterns.
-    fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+    async fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Pixel<Self::Color>>;
 
@@ -385,7 +386,7 @@ pub trait DrawTarget: Dimensions {
     /// [`draw_iter`]: DrawTarget::draw_iter
     /// [`Rectangle::intersection`]: super::primitives::rectangle::Rectangle::intersection()
     /// [`PointsIter::points`]: super::primitives::PointsIter::points
-    fn fill_contiguous<I>(&mut self, area: &Rectangle, colors: I) -> Result<(), Self::Error>
+    async fn fill_contiguous<I>(&mut self, area: &Rectangle, colors: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Self::Color>,
     {
@@ -394,6 +395,7 @@ pub trait DrawTarget: Dimensions {
                 .zip(colors)
                 .map(|(pos, color)| Pixel(pos, color)),
         )
+        .await
     }
 
     /// Fill a given area with a solid color.
@@ -404,8 +406,12 @@ pub trait DrawTarget: Dimensions {
     ///
     /// The default implementation of this method calls [`fill_contiguous`](DrawTarget::fill_contiguous())
     /// with an iterator that repeats the given `color` for every point in `area`.
-    fn fill_solid(&mut self, area: &Rectangle, color: Self::Color) -> Result<(), Self::Error> {
-        self.fill_contiguous(area, core::iter::repeat(color))
+    async fn fill_solid(
+        &mut self,
+        area: &Rectangle,
+        color: Self::Color,
+    ) -> Result<(), Self::Error> {
+        self.fill_contiguous(area, core::iter::repeat(color)).await
     }
 
     /// Fill the entire display with a solid color.
@@ -419,7 +425,7 @@ pub trait DrawTarget: Dimensions {
     /// [`Dimensions`]: super::geometry::Dimensions
     /// [`bounding_box`]: super::geometry::Dimensions::bounding_box
     /// [`fill_solid`]: DrawTarget::fill_solid()
-    fn clear(&mut self, color: Self::Color) -> Result<(), Self::Error> {
-        self.fill_solid(&self.bounding_box(), color)
+    async fn clear(&mut self, color: Self::Color) -> Result<(), Self::Error> {
+        self.fill_solid(&self.bounding_box(), color).await
     }
 }

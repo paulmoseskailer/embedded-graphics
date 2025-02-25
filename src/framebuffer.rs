@@ -167,6 +167,7 @@ macro_rules! impl_bit {
             }
         }
 
+        #[maybe_async::maybe_async(AFIT)]
         impl<C, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
             for Framebuffer<C, $raw_type, BO, WIDTH, HEIGHT, N>
         where
@@ -175,7 +176,7 @@ macro_rules! impl_bit {
             type Color = C;
             type Error = Infallible;
 
-            fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+            async fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
             where
                 I: IntoIterator<Item = Pixel<Self::Color>>,
             {
@@ -213,6 +214,7 @@ where
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
     for Framebuffer<C, RawU8, BO, WIDTH, HEIGHT, N>
 where
@@ -221,7 +223,7 @@ where
     type Color = C;
     type Error = Infallible;
 
-    fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+    async fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {
@@ -260,6 +262,7 @@ macro_rules! impl_bytes {
             }
         }
 
+        #[maybe_async::maybe_async(AFIT)]
         impl<C, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
             for Framebuffer<C, $raw_type, $bo_type, WIDTH, HEIGHT, N>
         where
@@ -268,7 +271,7 @@ macro_rules! impl_bytes {
             type Color = C;
             type Error = Infallible;
 
-            fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+            async fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
             where
                 I: IntoIterator<Item = Pixel<Self::Color>>,
             {

@@ -159,11 +159,12 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Sector {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Sector {
     type Color = C;
     type Output = ();
 
-    fn draw_styled<D>(
+    async fn draw_styled<D>(
         &self,
         style: &PrimitiveStyle<C>,
         target: &mut D,
@@ -171,7 +172,9 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Sector {
     where
         D: DrawTarget<Color = C>,
     {
-        target.draw_iter(StyledPixelsIterator::new(self, style))
+        target
+            .draw_iter(StyledPixelsIterator::new(self, style))
+            .await
     }
 }
 

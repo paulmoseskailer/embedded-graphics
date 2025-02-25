@@ -40,8 +40,8 @@ pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
     }
 }
 
-fn draw_thick<D>(
-    polyline: &Polyline,
+async fn draw_thick<D>(
+    polyline: &Polyline<'_>,
     style: &PrimitiveStyle<D::Color>,
     stroke_color: D::Color,
     target: &mut D,
@@ -53,7 +53,7 @@ where
         let rect = line.to_rectangle();
 
         if !rect.is_zero_sized() {
-            target.fill_solid(&rect, stroke_color)?;
+            target.fill_solid(&rect, stroke_color).await?;
         }
     }
 
@@ -142,11 +142,12 @@ impl<'a, C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Polyline<'a> {
     }
 }
 
+#[maybe_async::maybe_async(AFIT)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Polyline<'_> {
     type Color = C;
     type Output = ();
 
-    fn draw_styled<D>(
+    async fn draw_styled<D>(
         &self,
         style: &PrimitiveStyle<C>,
         target: &mut D,
@@ -157,7 +158,11 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Polyline<'_> {
         if let Some(stroke_color) = style.stroke_color {
             match style.stroke_width {
                 0 => Ok(()),
-                1 => target.draw_iter(self.points().map(|point| Pixel(point, stroke_color))),
+                1 => {
+                    target
+                        .draw_iter(self.points().map(|point| Pixel(point, stroke_color)))
+                        .await
+                }
                 _ => {
                     if self.translate != Point::zero() {
                         draw_thick(
@@ -166,8 +171,9 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Polyline<'_> {
                             stroke_color,
                             &mut target.translated(self.translate),
                         )
+                        .await
                     } else {
-                        draw_thick(self, style, stroke_color, target)
+                        draw_thick(self, style, stroke_color, target).await
                     }
                 }
             }
