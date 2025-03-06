@@ -1,34 +1,10 @@
 //! Prelude
 
-#[maybe_async_cfg::maybe(
-    idents(DrawTargetExt),
-    sync(feature = "draw_target_sync"),
-    async(
-        feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
-    )
-)]
-use crate::draw_target::{DrawTarget, DrawTargetExt};
-#[maybe_async_cfg::maybe(
-    idents(ImageDrawable),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::image::ImageDrawable;
-#[maybe_async_cfg::maybe(
-    idents(PixelIteratorExt),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::iterator::PixelIteratorExt;
-#[maybe_async_cfg::maybe(
-    idents(Drawable),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::Drawable;
 #[doc(no_inline)]
+#[cfg(feature = "draw_target_async")]
+use crate::draw_target::DrawTargetAsync;
 pub use crate::{
+    draw_target::DrawTarget,
     geometry::{Angle, AngleUnit, Dimensions, OriginDimensions, Point, Size},
     image::ImageDrawableExt,
     iterator::ContiguousIteratorExt,
@@ -39,4 +15,18 @@ pub use crate::{
     primitives::{ContainsPoint, OffsetOutline, PointsIter, Primitive},
     transform::Transform,
     Pixel,
+};
+#[maybe_async_cfg::maybe(
+    idents(DrawTargetExt),
+    idents(PixelIteratorExt),
+    idents(ImageDrawable),
+    idents(Drawable),
+    sync(feature = "draw_target_sync"),
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
+)]
+pub use crate::{
+    draw_target::DrawTargetExt, image::ImageDrawable, iterator::PixelIteratorExt, Drawable,
 };
