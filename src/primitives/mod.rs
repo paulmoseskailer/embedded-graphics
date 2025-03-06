@@ -22,7 +22,7 @@ pub use self::rectangle::Rectangle;
         idents(Triangle(async = "TriangleAsync"))
     )
 )]
-use self::triangle::Triangle;
+pub use self::triangle::Triangle;
 pub use self::{
     arc::Arc,
     circle::Circle,

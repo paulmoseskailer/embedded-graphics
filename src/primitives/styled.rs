@@ -1,9 +1,11 @@
 #[maybe_async_cfg::maybe(
-    idents(Drawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 use crate::{draw_target::DrawTarget, Drawable};
@@ -119,11 +121,14 @@ impl<T: StyledDimensions<S>, S> Dimensions for Styled<T, S> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(StyledDrawable, Drawable),
+    idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 impl<T: StyledDrawable<S>, S> Drawable for Styled<T, S> {

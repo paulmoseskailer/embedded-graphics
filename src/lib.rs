@@ -309,8 +309,10 @@ pub mod text;
 pub mod transform;
 
 #[maybe_async_cfg::maybe(
-    idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Drawable(async = "DrawableAsync"))
+    )
 )]
 pub use embedded_graphics_core::{pixelcolor, Drawable, Pixel};

@@ -376,11 +376,15 @@ where
 mod tests {
     use super::*;
     #[maybe_async_cfg::maybe(
-        idents(Drawable, PixelIteratorExt),
+        idents(PixelIteratorExt),
         sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
         async(
             feature = "draw_target_async",
-            idents(Image(async = "ImageAsync"), DrawTarget(async = "DrawTargetAsync"))
+            idents(
+                Drawable(async = "DrawableAsync"),
+                Image(async = "ImageAsync"),
+                DrawTarget(async = "DrawTargetAsync")
+            )
         )
     )]
     use crate::{draw_target::DrawTarget, image::Image, iterator::PixelIteratorExt, Drawable};

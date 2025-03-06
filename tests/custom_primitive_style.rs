@@ -1,9 +1,12 @@
 #[maybe_async_cfg::maybe(
-    idents(Drawable, StyledDrawable),
+    idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 use embedded_graphics::{draw_target::DrawTarget, primitives::StyledDrawable, Drawable};

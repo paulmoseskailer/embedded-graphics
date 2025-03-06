@@ -1,5 +1,5 @@
 //! Prelude
-#[cfg(feature = "async_draw_target")]
+#[cfg(feature = "draw_target_async")]
 pub use crate::draw_target::DrawTargetAsync;
 #[doc(no_inline)]
 pub use crate::{
@@ -13,11 +13,13 @@ pub use crate::{
     primitives::PointsIter,
 };
 #[maybe_async_cfg::maybe(
-    idents(Drawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(ImageDrawable(async = "ImageDrawableAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            ImageDrawable(async = "ImageDrawableAsync")
+        )
     )
 )]
 pub use crate::{drawable::Drawable, image::ImageDrawable};

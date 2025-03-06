@@ -6,7 +6,8 @@ use crate::image::SubImage;
         idents(ImageDrawable(async = "ImageDrawableAsync"))
     )
 )]
-use embedded_graphics_core::{image::ImageDrawable, primitives::Rectangle};
+use embedded_graphics_core::image::ImageDrawable;
+use embedded_graphics_core::primitives::Rectangle;
 
 /// Extension trait for image drawables.
 pub trait ImageDrawableExt: Sized {

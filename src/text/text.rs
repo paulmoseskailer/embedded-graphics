@@ -13,9 +13,11 @@ use crate::draw_target::DrawTarget;
 )]
 use crate::text::renderer::TextRenderer;
 #[maybe_async_cfg::maybe(
-    idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Drawable(async = "DrawableAsync"))
+    )
 )]
 use crate::Drawable;
 use crate::{
@@ -173,11 +175,14 @@ impl<S: TextRenderer> Text<'_, S> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(Drawable, TextRenderer),
+    idents(TextRenderer),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 impl<S: TextRenderer> Drawable for Text<'_, S> {

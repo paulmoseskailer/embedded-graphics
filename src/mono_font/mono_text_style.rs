@@ -1,9 +1,13 @@
 #[maybe_async_cfg::maybe(
-    idents(TextRenderer, Drawable),
+    idents(TextRenderer),
     sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
     async(
         feature = "draw_target_async",
-        idents(Image(async = "ImageAsync"), DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            Image(async = "ImageAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 use crate::{draw_target::DrawTarget, image::Image, text::renderer::TextRenderer, Drawable};
@@ -566,9 +570,11 @@ where
 mod tests {
     use super::*;
     #[maybe_async_cfg::maybe(
-        idents(Drawable),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(Drawable(async = "DrawableAsync"))
+        )
     )]
     use crate::Drawable;
     use crate::{

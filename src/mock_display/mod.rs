@@ -759,9 +759,11 @@ mod tests {
     use super::*;
     use crate::pixelcolor::{BinaryColor, Rgb565};
     #[maybe_async_cfg::maybe(
-        idents(Drawable),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(Drawable(async = "DrawableAsync"))
+        )
     )]
     use crate::Drawable;
 

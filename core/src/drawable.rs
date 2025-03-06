@@ -6,7 +6,8 @@
         idents(DrawTarget(async = "DrawTargetAsync"))
     )
 )]
-use crate::{draw_target::DrawTarget, geometry::Point, pixelcolor::PixelColor};
+use crate::draw_target::DrawTarget;
+use crate::{geometry::Point, pixelcolor::PixelColor};
 
 /// Marks an object as "drawable". Must be implemented for all graphics objects
 ///
@@ -72,10 +73,13 @@ use crate::{draw_target::DrawTarget, geometry::Point, pixelcolor::PixelColor};
 /// [`DrawTarget`]: crate::draw_target::DrawTarget
 /// [`draw_iter`]: crate::draw_target::DrawTarget::draw_iter
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
+    sync(feature = "draw_target_sync", idents(Drawable(sync = "Drawable"))),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 pub trait Drawable {
@@ -159,11 +163,13 @@ where
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(Drawable),
-    sync(feature = "draw_target_sync"),
+    sync(feature = "draw_target_sync", idents(Drawable(sync = "Drawable"))),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 impl<C> Drawable for Pixel<C>
@@ -185,9 +191,11 @@ where
 mod tests {
     // NOTE: `crate` cannot be used here due to circular dependency resolution behavior.
     #[maybe_async_cfg::maybe(
-        idents(Drawable),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(Drawable(async = "DrawableAsync"))
+        )
     )]
     use embedded_graphics::{
         geometry::Point, mock_display::MockDisplay, pixelcolor::BinaryColor, Drawable, Pixel,

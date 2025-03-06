@@ -99,6 +99,7 @@ mod image_drawable_ext;
 mod image_raw;
 mod sub_image;
 
+pub use embedded_graphics_core::image::GetPixel;
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
     async(
@@ -106,21 +107,24 @@ mod sub_image;
         idents(ImageDrawable(async = "ImageDrawableAsync"))
     )
 )]
-pub use embedded_graphics_core::image::{GetPixel, ImageDrawable};
+pub use embedded_graphics_core::image::ImageDrawable;
 pub use image_drawable_ext::ImageDrawableExt;
 pub use image_raw::{ImageRaw, ImageRawBE, ImageRawError, ImageRawLE};
 pub use sub_image::SubImage;
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTargetExt, Drawable),
+    idents(DrawTargetExt),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            Drawable(async = "DrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
+use crate::draw_target::{DrawTarget, DrawTargetExt};
 use crate::{
-    draw_target::{DrawTarget, DrawTargetExt},
     geometry::{Dimensions, OriginDimensions, Point},
     primitives::Rectangle,
     transform::Transform,
@@ -253,11 +257,11 @@ impl<T> Transform for Image<'_, T> {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Drawable),
     sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
     async(
         feature = "draw_target_async",
         idents(
+            Drawable(async = "DrawableAsync"),
             Image(async = "ImageAsync"),
             ImageDrawable(async = "ImageDrawableAsync"),
             DrawTarget(async = "DrawTargetAsync")

@@ -1,11 +1,10 @@
 use criterion::*;
 use embedded_graphics::{geometry::AnchorPoint, pixelcolor::Gray8, prelude::*, primitives::*};
 #[maybe_async_cfg::maybe(
-    idents(Drawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(Triangle(async = "TriangleAsync"))
+        idents(Drawable(async = "DrawableAsync"), Triangle(async = "TriangleAsync"))
     )
 )]
 use embedded_graphics::{primitives::triangle::Triangle, Drawable};
@@ -226,9 +225,11 @@ criterion_group!(
 criterion_main!(primitives);
 
 #[maybe_async_cfg::maybe(
-    idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Drawable(async = "DrawableAsync"))
+    )
 )]
 fn closed_shape_benches<P>(c: &mut Criterion, name: &str, build: impl Fn() -> P)
 where
@@ -299,9 +300,11 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Drawable(async = "DrawableAsync"))
+    )
 )]
 fn open_shape_benches<P>(c: &mut Criterion, name: &str, build: impl Fn() -> P)
 where
