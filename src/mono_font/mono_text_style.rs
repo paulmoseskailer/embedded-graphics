@@ -1,9 +1,9 @@
 #[maybe_async_cfg::maybe(
-    idents(Image, TextRenderer, Drawable),
-    sync(feature = "draw_target_sync"),
+    idents(TextRenderer, Drawable),
+    sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(Image(async = "ImageAsync"), DrawTarget(async = "DrawTargetAsync"))
     )
 )]
 use crate::{draw_target::DrawTarget, image::Image, text::renderer::TextRenderer, Drawable};
@@ -155,7 +155,7 @@ where
             match element {
                 LineElement::Char(c) => {
                     let glyph = self.font.glyph(c);
-                    ImageSync::new(&glyph, p).draw(&mut target).await?;
+                    Image::new(&glyph, p).draw(&mut target).await?;
                 }
                 // Fill space between characters if background color is set.
                 LineElement::Spacing if self.font.character_spacing > 0 => {

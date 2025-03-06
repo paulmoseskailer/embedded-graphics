@@ -230,9 +230,8 @@ pub(crate) mod tests {
 
     use super::*;
     #[maybe_async_cfg::maybe(
-        idents(Image),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
+        async(feature = "draw_target_async", idents(Image(async = "ImageAsync")))
     )]
     use crate::image::Image;
     #[maybe_async_cfg::maybe(
@@ -373,7 +372,7 @@ pub(crate) mod tests {
 
         for (mapping, font) in fonts {
             let mut expected = new_framebuffer();
-            ImageSync::new(&font.image, Point::zero())
+            Image::new(&font.image, Point::zero())
                 .draw(&mut expected)
                 .unwrap();
 

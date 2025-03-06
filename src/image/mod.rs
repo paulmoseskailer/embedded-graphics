@@ -38,7 +38,7 @@
 //! let raw: ImageRawBE<Rgb565> = ImageRaw::new(&data, Size::new(4, 2)).unwrap();
 //!
 //! // Create an `Image` object to position the image at `Point::zero()`.
-//! let image = ImageSync::new(&raw, Point::zero());
+//! let image = Image::new(&raw, Point::zero());
 //!
 //! // Draw the image to the display.
 //! image.draw(&mut display)?;
@@ -76,8 +76,8 @@
 //! let sprite_2 = sprite_atlas.sub_image(&Rectangle::new(Point::new(16, 0), Size::new(16, 16)));
 //!
 //! // Create `Image` objects to draw the sprites at different positions on the display.
-//! ImageSync::new(&sprite_1, Point::new(10, 10)).draw(&mut display)?;
-//! ImageSync::new(&sprite_2, Point::new(40, 30)).draw(&mut display)?;
+//! Image::new(&sprite_1, Point::new(10, 10)).draw(&mut display)?;
+//! Image::new(&sprite_2, Point::new(40, 30)).draw(&mut display)?;
 //!
 //! # Ok::<(), core::convert::Infallible>(())
 //! ```
@@ -142,8 +142,8 @@ use core::fmt::Debug;
 /// [`Transform::translate_mut`]: super::transform::Transform::translate_mut
 /// [`DrawTarget`]: super::draw_target::DrawTarget
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
+    async(feature = "draw_target_async", idents(Image(async = "ImageAsync")))
 )]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
@@ -153,10 +153,10 @@ pub struct Image<'a, T> {
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
+    sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
     async(
         feature = "draw_target_async",
-        idents(ImageDrawable(async = "ImageDrawableAsync"))
+        idents(ImageDrawable(async = "ImageDrawableAsync"), Image(sync = "Image"))
     )
 )]
 impl<'a, T> Image<'a, T>
@@ -183,8 +183,8 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
+    async(feature = "draw_target_async", idents(Image(async = "ImageAsync")))
 )]
 impl<T> Transform for Image<'_, T> {
     /// Translate the image by a given delta, returning a new image
@@ -206,7 +206,7 @@ impl<T> Transform for Image<'_, T> {
     ///
     /// let image: ImageRaw<BinaryColor> = ImageRaw::new(&[0xff, 0x00, 0xff, 0x00], Size::new(4, 4)).unwrap();
     ///
-    /// let image = ImageSync::new(&image, Point::zero());
+    /// let image = Image::new(&image, Point::zero());
     ///
     /// let image_moved = image.translate(Point::new(10, 20));
     ///
@@ -239,7 +239,7 @@ impl<T> Transform for Image<'_, T> {
     ///
     /// let image: ImageRaw<BinaryColor> = ImageRaw::new(&[0xff, 0x00, 0xff, 0x00], Size::new(4, 4)).unwrap();
     ///
-    /// let mut image = ImageSync::new(&image, Point::zero());
+    /// let mut image = Image::new(&image, Point::zero());
     ///
     /// image.translate_mut(Point::new(10, 20));
     ///
@@ -254,10 +254,11 @@ impl<T> Transform for Image<'_, T> {
 
 #[maybe_async_cfg::maybe(
     idents(Drawable),
-    sync(feature = "draw_target_sync"),
+    sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
     async(
         feature = "draw_target_async",
         idents(
+            Image(async = "ImageAsync"),
             ImageDrawable(async = "ImageDrawableAsync"),
             DrawTarget(async = "DrawTargetAsync")
         )
@@ -281,8 +282,8 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
+    async(feature = "draw_target_async", idents(Image(async = "ImageAsync")))
 )]
 impl<'a, T> Dimensions for Image<'a, T>
 where
@@ -303,7 +304,7 @@ mod tests {
         let image: ImageRaw<BinaryColor> =
             ImageRaw::new(&[0xff, 0x00, 0xff, 0x00], Size::new(4, 4)).unwrap();
 
-        let image = ImageSync::new(&image, Point::zero()).translate(Point::new(-1, -1));
+        let image = Image::new(&image, Point::zero()).translate(Point::new(-1, -1));
 
         assert_eq!(
             image.bounding_box(),
@@ -316,7 +317,7 @@ mod tests {
         let image: ImageRaw<BinaryColor> =
             ImageRaw::new(&[0xff, 0x00, 0xFF, 0x00], Size::new(4, 4)).unwrap();
 
-        let image = ImageSync::new(&image, Point::zero()).translate(Point::new(100, 200));
+        let image = Image::new(&image, Point::zero()).translate(Point::new(100, 200));
 
         assert_eq!(
             image.bounding_box(),
@@ -330,7 +331,7 @@ mod tests {
             ImageRaw::new(&[0xAA, 0x55, 0xAA, 0x55], Size::new(4, 4)).unwrap();
 
         let mut display = MockDisplay::new();
-        ImageSync::new(&image_raw, Point::new(1, 2))
+        Image::new(&image_raw, Point::new(1, 2))
             .draw(&mut display)
             .unwrap();
 
@@ -350,7 +351,7 @@ mod tests {
             ImageRaw::new(&[0xAA, 0x55, 0xAA, 0x55], Size::new(4, 4)).unwrap();
 
         let mut display = MockDisplay::new();
-        ImageSync::with_center(&image_raw, Point::new(1, 2))
+        Image::with_center(&image_raw, Point::new(1, 2))
             .draw(&mut display)
             .unwrap();
 

@@ -337,9 +337,8 @@ mod tests {
     use super::*;
 
     #[maybe_async_cfg::maybe(
-        idents(Image),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
+        async(feature = "draw_target_async", idents(Image(async = "ImageAsync")))
     )]
     use crate::image::Image;
     #[maybe_async_cfg::maybe(
@@ -711,7 +710,7 @@ mod tests {
         .unwrap();
 
         let mut display = MockDisplay::<BinaryColor>::new();
-        ImageSync::new(&fb.as_image(), Point::new(2, 1))
+        Image::new(&fb.as_image(), Point::new(2, 1))
             .draw(&mut display)
             .unwrap();
 
