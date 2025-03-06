@@ -1,4 +1,9 @@
 use crate::image::SubImage;
+#[maybe_async_cfg::maybe(
+    idents(ImageDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 use embedded_graphics_core::{image::ImageDrawable, primitives::Rectangle};
 
 /// Extension trait for image drawables.
@@ -40,6 +45,12 @@ pub trait ImageDrawableExt: Sized {
     fn sub_image(&self, area: &Rectangle) -> SubImage<Self>;
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(ImageDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T> ImageDrawableExt for T
 where
     T: ImageDrawable,

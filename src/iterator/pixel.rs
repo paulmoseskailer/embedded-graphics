@@ -37,7 +37,13 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{iterator::PixelIteratorExt, pixelcolor::BinaryColor};
+    #[maybe_async_cfg::maybe(
+        idents(PixelIteratorExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::iterator::PixelIteratorExt;
+    use crate::pixelcolor::BinaryColor;
 
     #[test]
     fn translate() {

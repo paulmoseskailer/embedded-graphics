@@ -1,6 +1,12 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
 use crate::{
-    draw_target::DrawTarget, geometry::Dimensions, iterator::ContiguousIteratorExt,
-    pixelcolor::BinaryColor, primitives::Rectangle, Pixel,
+    geometry::Dimensions, iterator::ContiguousIteratorExt, pixelcolor::BinaryColor,
+    primitives::Rectangle, Pixel,
 };
 
 pub struct MonoFontDrawTarget<'a, T, C> {
@@ -8,13 +14,24 @@ pub struct MonoFontDrawTarget<'a, T, C> {
     colors: C,
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, T: DrawTarget, C> MonoFontDrawTarget<'a, T, C> {
     pub fn new(parent: &'a mut T, colors: C) -> Self {
         Self { parent, colors }
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Foreground<T::Color>> {
     type Color = BinaryColor;
     type Error = T::Error;
@@ -59,7 +76,12 @@ impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Foreground<T::Color
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Background<T::Color>> {
     type Color = BinaryColor;
     type Error = T::Error;
@@ -104,7 +126,12 @@ impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Background<T::Color
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Both<T::Color>> {
     type Color = BinaryColor;
     type Error = T::Error;
@@ -150,6 +177,12 @@ impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Both<T::Color>> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T: DrawTarget, C> Dimensions for MonoFontDrawTarget<'_, T, C> {
     fn bounding_box(&self) -> Rectangle {
         self.parent.bounding_box()

@@ -1,11 +1,22 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::styled::StyledDrawable;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Dimensions, Point},
     pixelcolor::PixelColor,
     primitives::{
         common::{Scanline, StyledScanline},
         rounded_rectangle::{points::Scanlines, RoundedRectangle},
-        styled::{StyledDimensions, StyledDrawable, StyledPixels},
+        styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle, Rectangle,
     },
     Pixel,
@@ -103,7 +114,12 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for RoundedRectangle {
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, StyledDrawable, draw_stroke(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for RoundedRectangle {
     type Color = C;
     type Output = ();
@@ -199,15 +215,25 @@ impl Iterator for StyledScanlines {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(PixelIteratorExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::iterator::PixelIteratorExt;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
         geometry::{Dimensions, Point, Size},
-        iterator::PixelIteratorExt,
         mock_display::MockDisplay,
         pixelcolor::{BinaryColor, Rgb888, RgbColor},
         primitives::{
             rectangle::Rectangle, CornerRadii, Primitive, PrimitiveStyleBuilder, StrokeAlignment,
         },
-        Drawable,
     };
 
     #[test]

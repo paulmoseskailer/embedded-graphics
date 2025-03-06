@@ -1,7 +1,29 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(Image),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::image::Image;
+#[maybe_async_cfg::maybe(
+    idents(TextRenderer),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::text::renderer::TextRenderer;
+#[maybe_async_cfg::maybe(
+    idents(Drawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::Drawable;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Point, Size},
-    image::Image,
     mono_font::{
         draw_target::{Background, Both, Foreground, MonoFontDrawTarget},
         MonoFont,
@@ -9,10 +31,9 @@ use crate::{
     pixelcolor::{BinaryColor, PixelColor},
     primitives::Rectangle,
     text::{
-        renderer::{CharacterStyle, TextMetrics, TextRenderer},
+        renderer::{CharacterStyle, TextMetrics},
         Baseline, DecorationColor,
     },
-    Drawable,
 };
 use az::SaturatingAs;
 
@@ -48,7 +69,12 @@ pub struct MonoTextStyle<'a, C> {
     pub font: &'a MonoFont<'a>,
 }
 
-#[maybe_async::maybe_async]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, C> MonoTextStyle<'a, C>
 where
     C: PixelColor,
@@ -142,7 +168,7 @@ where
             match element {
                 LineElement::Char(c) => {
                     let glyph = self.font.glyph(c);
-                    Image::new(&glyph, p).draw(&mut target).await?;
+                    ImageSync::new(&glyph, p).draw(&mut target).await?;
                 }
                 // Fill space between characters if background color is set.
                 LineElement::Spacing if self.font.character_spacing > 0 => {
@@ -187,7 +213,12 @@ where
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, TextRenderer),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C> TextRenderer for MonoTextStyle<'_, C>
 where
     C: PixelColor,
@@ -557,8 +588,13 @@ mod tests {
         },
         pixelcolor::{BinaryColor, Rgb888, RgbColor},
         text::Text,
-        Drawable,
     };
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     const SPACED_FONT: MonoFont = MonoFont {
         character_spacing: 5,

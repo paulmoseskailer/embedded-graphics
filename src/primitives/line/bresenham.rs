@@ -221,7 +221,13 @@ pub fn major_length(line: &Line) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{mock_display::MockDisplay, pixelcolor::BinaryColor, Drawable, Pixel};
+    use crate::{mock_display::MockDisplay, pixelcolor::BinaryColor, Pixel};
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     #[test]
     fn bresenham() {

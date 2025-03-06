@@ -184,8 +184,13 @@
 mod color_mapping;
 mod fancy_panic;
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Dimensions, OriginDimensions, Point, Size},
     pixelcolor::{PixelColor, Rgb888, RgbColor},
     primitives::{PointsIter, Rectangle},
@@ -697,7 +702,12 @@ where
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C> DrawTarget for MockDisplay<C>
 where
     C: PixelColor,
@@ -743,10 +753,13 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        pixelcolor::{BinaryColor, Rgb565},
-        Drawable,
-    };
+    use crate::pixelcolor::{BinaryColor, Rgb565};
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     #[test]
     #[should_panic(expected = "tried to draw pixel outside the display area (x: 65, y: 0)")]

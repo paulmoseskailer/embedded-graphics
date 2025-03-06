@@ -1,12 +1,23 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::styled::StyledDrawable;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Dimensions, Point, PointExt},
     pixelcolor::PixelColor,
     primitives::{
         circle::{points::Scanlines, Circle},
         common::{Scanline, StyledScanline},
         rectangle::Rectangle,
-        styled::{StyledDimensions, StyledDrawable, StyledPixels},
+        styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle,
     },
     Pixel,
@@ -102,7 +113,12 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Circle {
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Circle {
     type Color = C;
     type Output = ();
@@ -189,6 +205,12 @@ impl Iterator for StyledScanlines {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
         geometry::{Dimensions, Point},
         iterator::PixelIteratorExt,
@@ -197,7 +219,6 @@ mod tests {
         primitives::{
             OffsetOutline, PointsIter, Primitive, PrimitiveStyleBuilder, StrokeAlignment, Styled,
         },
-        Drawable,
     };
 
     /// Draws a styled circle by only using the points iterator.

@@ -229,10 +229,16 @@ pub(crate) mod tests {
     use arrayvec::ArrayString;
 
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(Image),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::image::Image;
     use crate::{
         framebuffer::{buffer_size, Framebuffer},
         geometry::{Dimensions, Point},
-        image::{GetPixel, Image},
+        image::GetPixel,
         mock_display::MockDisplay,
         mono_font::{mapping::Mapping, MonoTextStyleBuilder},
         pixelcolor::{
@@ -240,8 +246,13 @@ pub(crate) mod tests {
             BinaryColor,
         },
         text::{Baseline, Text},
-        Drawable,
     };
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     /// Draws a text using the given font and checks it against the expected pattern.
     #[track_caller]
@@ -362,7 +373,7 @@ pub(crate) mod tests {
 
         for (mapping, font) in fonts {
             let mut expected = new_framebuffer();
-            Image::new(&font.image, Point::zero())
+            ImageSync::new(&font.image, Point::zero())
                 .draw(&mut expected)
                 .unwrap();
 

@@ -92,4 +92,9 @@ pub mod pixelcolor;
 pub mod prelude;
 pub mod primitives;
 
+#[maybe_async_cfg::maybe(
+    idents(Drawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use drawable::{Drawable, Pixel};

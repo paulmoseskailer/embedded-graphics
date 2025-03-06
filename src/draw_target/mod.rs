@@ -7,14 +7,44 @@ mod translated;
 
 use crate::{geometry::Point, pixelcolor::PixelColor, primitives::Rectangle};
 
+#[maybe_async_cfg::maybe(
+    idents(Clipped),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use clipped::Clipped;
+#[maybe_async_cfg::maybe(
+    idents(ColorConverted),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use color_converted::ColorConverted;
+#[maybe_async_cfg::maybe(
+    idents(Cropped),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use cropped::Cropped;
+#[maybe_async_cfg::maybe(
+    idents(Translated),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use translated::Translated;
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use embedded_graphics_core::draw_target::DrawTarget;
 
 /// Extension trait for `DrawTarget`s.
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, Clipped, Translated, Cropped, ColorConverted),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub trait DrawTargetExt: DrawTarget + Sized {
     /// Creates a translated draw target based on this draw target.
     ///
@@ -212,6 +242,19 @@ pub trait DrawTargetExt: DrawTarget + Sized {
         C: PixelColor + Into<Self::Color>;
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(
+        DrawTarget,
+        DrawTargetExt,
+        Clipped,
+        Cropped,
+        Translated,
+        ColorConverted
+    ),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T> DrawTargetExt for T
 where
     T: DrawTarget,
@@ -238,14 +281,25 @@ where
 
 #[cfg(test)]
 mod tests {
+    #[maybe_async_cfg::maybe(
+        idents(DrawTarget, DrawTargetExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::draw_target::{DrawTarget, DrawTargetExt};
     use crate::{
-        draw_target::{DrawTarget, DrawTargetExt},
         geometry::{Dimensions, Point, Size},
         mock_display::MockDisplay,
         pixelcolor::BinaryColor,
         primitives::{Primitive, PrimitiveStyle, Rectangle},
-        Drawable, Pixel,
+        Pixel,
     };
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     #[test]
     fn draw_iter() {

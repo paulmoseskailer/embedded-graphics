@@ -1,7 +1,17 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(PixelIteratorExt),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::iterator::PixelIteratorExt;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Dimensions, Point},
-    iterator::PixelIteratorExt,
     primitives::Rectangle,
     transform::Transform,
     Pixel,
@@ -13,6 +23,11 @@ use crate::{
 /// See the [`translated`] method documentation for more.
 ///
 /// [`translated`]: crate::draw_target::DrawTargetExt::translated
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Translated<'a, T>
@@ -23,6 +38,11 @@ where
     offset: Point,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, T> Translated<'a, T>
 where
     T: DrawTarget,
@@ -32,7 +52,11 @@ where
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T> DrawTarget for Translated<'_, T>
 where
     T: DrawTarget,
@@ -71,6 +95,11 @@ where
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T> Dimensions for Translated<'_, T>
 where
     T: DrawTarget,
@@ -82,8 +111,13 @@ where
 
 #[cfg(test)]
 mod tests {
+    #[maybe_async_cfg::maybe(
+        idents(DrawTarget, DrawTargetExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::draw_target::{DrawTarget, DrawTargetExt};
     use crate::{
-        draw_target::{DrawTarget, DrawTargetExt},
         geometry::Dimensions,
         geometry::{Point, Size},
         mock_display::MockDisplay,

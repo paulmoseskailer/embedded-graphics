@@ -4,9 +4,13 @@ pub mod contiguous;
 pub mod pixel;
 pub mod raw;
 
-use crate::{
-    draw_target::DrawTarget, geometry::Point, pixelcolor::PixelColor, primitives::Rectangle, Pixel,
-};
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+use crate::{geometry::Point, pixelcolor::PixelColor, primitives::Rectangle, Pixel};
 
 /// Extension trait for contiguous iterators.
 pub trait ContiguousIteratorExt
@@ -29,14 +33,18 @@ where
 }
 
 /// Extension trait for pixel iterators.
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub trait PixelIteratorExt<C>
 where
     Self: Sized,
     C: PixelColor,
 {
     /// Draws the pixel iterator to a draw target.
-    async fn draw<D>(self, target: &mut D) -> Result<(), D::Error>
+    fn draw<D>(self, target: &mut D) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = C>;
 
@@ -44,7 +52,12 @@ where
     fn translated(self, offset: Point) -> pixel::Translated<Self>;
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, PixelIteratorExt),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<I, C> PixelIteratorExt<C> for I
 where
     C: PixelColor,
@@ -65,9 +78,15 @@ where
 #[cfg(test)]
 mod tests {
     use crate::{
-        geometry::Point, iterator::PixelIteratorExt, mock_display::MockDisplay,
+        geometry::Point, mock_display::MockDisplay,
         pixelcolor::BinaryColor, Pixel,
     };
+    #[maybe_async_cfg::maybe(
+        idents(PixelIteratorExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::iterator::PixelIteratorExt;
 
     #[test]
     fn draw_pixel_iterator() {

@@ -99,8 +99,13 @@ mod tests {
         mock_display::MockDisplay,
         pixelcolor::BinaryColor,
         primitives::{PointsIter, Primitive, PrimitiveStyle, Rectangle},
-        Drawable,
     };
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     #[test]
     fn points_equals_filled() {

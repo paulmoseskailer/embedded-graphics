@@ -3,7 +3,6 @@
 use core::{convert::Infallible, marker::PhantomData};
 
 use crate::{
-    draw_target::DrawTarget,
     geometry::{OriginDimensions, Point, Size},
     image::{GetPixel, ImageRaw},
     iterator::raw::RawDataSlice,
@@ -16,6 +15,12 @@ use crate::{
     },
     Pixel,
 };
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
 
 /// Calculates the required buffer size.
 ///
@@ -167,7 +172,12 @@ macro_rules! impl_bit {
             }
         }
 
-        #[maybe_async::maybe_async(AFIT)]
+        #[maybe_async_cfg::maybe(
+            keep_self,
+            idents(DrawTarget),
+            sync(feature="draw_target_sync"),
+            async(feature="draw_target_async"),
+        )]
         impl<C, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
             for Framebuffer<C, $raw_type, BO, WIDTH, HEIGHT, N>
         where
@@ -214,7 +224,12 @@ where
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature="draw_target_sync"),
+    async(feature="draw_target_async"),
+)]
 impl<C, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
     for Framebuffer<C, RawU8, BO, WIDTH, HEIGHT, N>
 where
@@ -262,7 +277,12 @@ macro_rules! impl_bytes {
             }
         }
 
-        #[maybe_async::maybe_async(AFIT)]
+        #[maybe_async_cfg::maybe(
+            keep_self,
+            idents(DrawTarget),
+            sync(feature="draw_target_sync"),
+            async(feature="draw_target_async"),
+        )]
         impl<C, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
             for Framebuffer<C, $raw_type, $bo_type, WIDTH, HEIGHT, N>
         where
@@ -311,12 +331,22 @@ mod tests {
     use crate::{
         geometry::Dimensions,
         geometry::Point,
-        image::Image,
         mock_display::MockDisplay,
         pixelcolor::{BinaryColor, Gray2, Gray4, Gray8, Rgb565, Rgb888, RgbColor},
         primitives::{Primitive, PrimitiveStyle},
-        Drawable,
     };
+    #[maybe_async_cfg::maybe(
+        idents(Image),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::image::Image;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     /// Calculate the framebuffer generic constants.
     macro_rules! framebuffer {
@@ -673,7 +703,7 @@ mod tests {
         .unwrap();
 
         let mut display = MockDisplay::<BinaryColor>::new();
-        Image::new(&fb.as_image(), Point::new(2, 1))
+        ImageSync::new(&fb.as_image(), Point::new(2, 1))
             .draw(&mut display)
             .unwrap();
 

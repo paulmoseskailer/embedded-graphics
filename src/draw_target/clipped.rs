@@ -1,6 +1,12 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
 use crate::{
-    draw_target::DrawTarget, geometry::Dimensions, iterator::contiguous::Cropped,
-    primitives::Rectangle, transform::Transform, Pixel,
+    geometry::Dimensions, iterator::contiguous::Cropped, primitives::Rectangle,
+    transform::Transform, Pixel,
 };
 
 /// Clipped draw target.
@@ -9,6 +15,11 @@ use crate::{
 /// See the [`clipped`] method documentation for more.
 ///
 /// [`clipped`]: crate::draw_target::DrawTargetExt::clipped
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Debug)]
 pub struct Clipped<'a, T>
 where
@@ -18,6 +29,11 @@ where
     clip_area: Rectangle,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, T> Clipped<'a, T>
 where
     T: DrawTarget,
@@ -29,7 +45,11 @@ where
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T> DrawTarget for Clipped<'_, T>
 where
     T: DrawTarget,
@@ -74,6 +94,11 @@ where
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T> Dimensions for Clipped<'_, T>
 where
     T: DrawTarget,
@@ -85,14 +110,22 @@ where
 
 #[cfg(test)]
 mod tests {
+    #[maybe_async_cfg::maybe(
+        idents(Drawable, DrawTarget, DrawTargetExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
     use crate::{
         draw_target::{DrawTarget, DrawTargetExt},
+        Drawable,
+    };
+    use crate::{
         geometry::Dimensions,
         geometry::{Point, Size},
         mock_display::MockDisplay,
         pixelcolor::BinaryColor,
         primitives::{Primitive, PrimitiveStyle, Rectangle},
-        Drawable, Pixel,
+        Pixel,
     };
 
     #[test]

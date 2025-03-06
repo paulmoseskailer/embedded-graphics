@@ -63,9 +63,15 @@ mod tests {
 
     use super::*;
     use crate::{
-        iterator::PixelIteratorExt, mock_display::MockDisplay, pixelcolor::BinaryColor,
+        mock_display::MockDisplay, pixelcolor::BinaryColor,
         primitives::PointsIter, Pixel,
     };
+#[maybe_async_cfg::maybe(
+    idents(PixelIteratorExt),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::iterator::PixelIteratorExt;
 
     fn test_points(start: Point, end: Point, expected: &[(i32, i32)]) {
         let expected = expected.iter().copied().map(Point::from);

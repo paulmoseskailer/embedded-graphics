@@ -1,7 +1,11 @@
-use crate::{
-    draw_target::DrawTarget, geometry::Dimensions, pixelcolor::PixelColor, primitives::Rectangle,
-    Pixel,
-};
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+use crate::{geometry::Dimensions, pixelcolor::PixelColor, primitives::Rectangle, Pixel};
+
 use core::marker::PhantomData;
 
 /// Color conversion draw target.
@@ -10,6 +14,10 @@ use core::marker::PhantomData;
 /// See the [`color_converted`] method documentation for more information.
 ///
 /// [`color_converted`]: crate::draw_target::DrawTargetExt::color_converted
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Debug)]
 pub struct ColorConverted<'a, T, C> {
     /// The parent draw target.
@@ -19,6 +27,11 @@ pub struct ColorConverted<'a, T, C> {
     color_type: PhantomData<C>,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, T, C> ColorConverted<'a, T, C>
 where
     T: DrawTarget,
@@ -32,7 +45,11 @@ where
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, ColorConverted),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T, C> DrawTarget for ColorConverted<'_, T, C>
 where
     T: DrawTarget,
@@ -72,6 +89,11 @@ where
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T, C> Dimensions for ColorConverted<'_, T, C>
 where
     T: DrawTarget,

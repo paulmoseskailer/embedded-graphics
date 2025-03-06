@@ -1,11 +1,22 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, DrawTargetExt),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::styled::StyledDrawable;
 use crate::{
-    draw_target::{DrawTarget, DrawTargetExt},
     geometry::{Dimensions, Point, Size},
     pixelcolor::PixelColor,
     primitives::{
         common::{Scanline, StrokeOffset, ThickSegmentIter},
         polyline::{self, scanline_iterator::ScanlineIterator, Polyline},
-        styled::{StyledDimensions, StyledDrawable, StyledPixels},
+        styled::{StyledDimensions, StyledPixels},
         PointsIter, PrimitiveStyle, Rectangle,
     },
     transform::Transform,
@@ -40,7 +51,11 @@ pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
     }
 }
 
-#[maybe_async::maybe_async]
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 async fn draw_thick<D>(
     polyline: &Polyline<'_>,
     style: &PrimitiveStyle<D::Color>,
@@ -143,7 +158,12 @@ impl<'a, C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Polyline<'a> {
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, StyledDrawable, draw_thick(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Polyline<'_> {
     type Color = C;
     type Output = ();
@@ -193,13 +213,23 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Polyline<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(PixelIteratorExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::iterator::PixelIteratorExt;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
         geometry::Point,
-        iterator::PixelIteratorExt,
         mock_display::MockDisplay,
         pixelcolor::{BinaryColor, Rgb565, RgbColor},
         primitives::{Primitive, PrimitiveStyle, PrimitiveStyleBuilder, StrokeAlignment},
-        Drawable,
     };
 
     // Smaller test pattern for mock display

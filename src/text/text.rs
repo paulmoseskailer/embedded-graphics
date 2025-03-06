@@ -1,13 +1,26 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(TextRenderer),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::text::renderer::TextRenderer;
+#[maybe_async_cfg::maybe(
+    idents(Drawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::Drawable;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Dimensions, Point, Size},
     primitives::Rectangle,
-    text::{
-        renderer::{TextMetrics, TextRenderer},
-        Alignment, Baseline, TextStyle,
-    },
+    text::{renderer::TextMetrics, Alignment, Baseline, TextStyle},
     transform::Transform,
-    Drawable,
 };
 use az::SaturatingAs;
 
@@ -105,6 +118,12 @@ impl<S: Clone> Transform for Text<'_, S> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(TextRenderer),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<S: TextRenderer> Text<'_, S> {
     fn line_height(&self) -> i32 {
         self.text_style
@@ -150,7 +169,12 @@ impl<S: TextRenderer> Text<'_, S> {
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(Drawable, DrawTarget, TextRenderer),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<S: TextRenderer> Drawable for Text<'_, S> {
     type Color = S::Color;
     type Output = Point;
@@ -185,6 +209,12 @@ fn update_min_max(min_max: &mut Option<(Point, Point)>, metrics: &TextMetrics) {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(TextRenderer),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<S: TextRenderer> Dimensions for Text<'_, S> {
     fn bounding_box(&self) -> Rectangle {
         let mut min_max: Option<(Point, Point)> = None;

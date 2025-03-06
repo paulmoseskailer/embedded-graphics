@@ -57,16 +57,31 @@ impl ContainsPoint for EllipseQuadrant {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(DrawTarget),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::draw_target::DrawTarget;
+    #[maybe_async_cfg::maybe(
+        idents(PixelIteratorExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::iterator::PixelIteratorExt;
     use crate::{
-        draw_target::DrawTarget,
         geometry::{Point, Size},
-        iterator::PixelIteratorExt,
         mock_display::MockDisplay,
         pixelcolor::BinaryColor,
         primitives::PointsIter,
         Pixel,
     };
 
+    #[maybe_async_cfg::maybe(
+        idents(DrawTarget),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
     fn draw_quadrant<D: DrawTarget<Color = BinaryColor>>(
         quadrant: &EllipseQuadrant,
         target: &mut D,
@@ -79,6 +94,11 @@ mod tests {
             .draw(target)
     }
 
+    #[maybe_async_cfg::maybe(
+        idents(draw_quadrant(fn)),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
     #[test]
     fn quadrants_even_size() {
         let cases = [
@@ -134,6 +154,11 @@ mod tests {
         }
     }
 
+    #[maybe_async_cfg::maybe(
+        idents(draw_quadrant(fn)),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
     #[test]
     fn quadrants_equal_even_ellipse() {
         let mut display = MockDisplay::new();
@@ -176,6 +201,11 @@ mod tests {
         ]);
     }
 
+    #[maybe_async_cfg::maybe(
+        idents(draw_quadrant(fn)),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
     #[test]
     fn quadrants_equal_odd_ellipse() {
         let mut display = MockDisplay::new();

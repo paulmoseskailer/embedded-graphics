@@ -1,4 +1,9 @@
 //! `Drawable` trait and helpers
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 use crate::{draw_target::DrawTarget, geometry::Point, pixelcolor::PixelColor};
 
 /// Marks an object as "drawable". Must be implemented for all graphics objects
@@ -64,7 +69,11 @@ use crate::{draw_target::DrawTarget, geometry::Point, pixelcolor::PixelColor};
 ///
 /// [`DrawTarget`]: crate::draw_target::DrawTarget
 /// [`draw_iter`]: crate::draw_target::DrawTarget::draw_iter
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub trait Drawable {
     /// The pixel color type.
     type Color: PixelColor;
@@ -144,7 +153,12 @@ pub struct Pixel<C>(pub Point, pub C)
 where
     C: PixelColor;
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(Drawable, DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C> Drawable for Pixel<C>
 where
     C: PixelColor,

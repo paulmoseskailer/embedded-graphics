@@ -1,11 +1,22 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::styled::StyledDrawable;
 use crate::{
-    draw_target::DrawTarget,
     geometry::Dimensions,
     pixelcolor::PixelColor,
     primitives::{
         arc::Arc,
         common::{DistanceIterator, PlaneSector},
-        styled::{StyledDimensions, StyledDrawable, StyledPixels},
+        styled::{StyledDimensions, StyledPixels},
         OffsetOutline, PrimitiveStyle, Rectangle,
     },
     Pixel,
@@ -69,7 +80,12 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Arc {
     type Color = C;
     type Output = ();
@@ -108,13 +124,23 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Arc {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(DrawTarget),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::draw_target::DrawTarget;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
-        draw_target::DrawTargetExt,
         geometry::{AnchorPoint, AngleUnit, Point, Size},
         mock_display::MockDisplay,
         pixelcolor::BinaryColor,
         primitives::{Circle, Primitive, PrimitiveStyle, PrimitiveStyleBuilder, StrokeAlignment},
-        Drawable,
     };
 
     // Check the rendering of a simple arc

@@ -1,7 +1,12 @@
 //! Image drawable.
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{OriginDimensions, Point},
     pixelcolor::PixelColor,
     primitives::Rectangle,
@@ -22,7 +27,11 @@ use crate::{
 ///
 /// [`Image`]: https://docs.rs/embedded-graphics/latest/embedded_graphics/image/struct.Image.html
 /// [`OriginDimensions`]: crate::geometry::OriginDimensions
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub trait ImageDrawable: OriginDimensions {
     /// The color type.
     type Color: PixelColor;

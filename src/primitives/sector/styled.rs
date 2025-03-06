@@ -1,5 +1,16 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::styled::StyledDrawable;
 use crate::{
-    draw_target::DrawTarget,
     geometry::angle_consts::ANGLE_90DEG,
     geometry::{Angle, Dimensions},
     pixelcolor::PixelColor,
@@ -7,7 +18,7 @@ use crate::{
         common::{
             DistanceIterator, LineSide, LinearEquation, PlaneSector, PointType, NORMAL_VECTOR_SCALE,
         },
-        styled::{StyledDimensions, StyledDrawable, StyledPixels},
+        styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle, Rectangle, Sector,
     },
     Pixel,
@@ -159,7 +170,12 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Sector {
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Sector {
     type Color = C;
     type Output = ();
@@ -197,6 +213,12 @@ enum BevelKind {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
         geometry::{AngleUnit, Point},
         mock_display::MockDisplay,
@@ -204,7 +226,6 @@ mod tests {
         primitives::{
             Circle, Primitive, PrimitiveStyle, PrimitiveStyleBuilder, StrokeAlignment, Styled,
         },
-        Drawable,
     };
 
     // Check the rendering of a simple sector

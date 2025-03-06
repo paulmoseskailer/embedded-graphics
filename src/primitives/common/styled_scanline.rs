@@ -1,6 +1,18 @@
 use core::ops::Range;
 
-use crate::{draw_target::DrawTarget, primitives::common::Scanline};
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+use crate::primitives::common::Scanline;
+#[maybe_async_cfg::maybe(
+    idents(PixelIteratorExt),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::iterator::PixelIteratorExt;
 
 /// Scanline with stroke and fill regions.
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
@@ -42,27 +54,51 @@ impl StyledScanline {
         Scanline::new(self.y, self.fill_range.clone())
     }
 
-    /// Draws the stroke regions.
-    #[maybe_async::maybe_async]
-    pub async fn draw_stroke<T: DrawTarget>(
+    /// Draws the stroke regions synchronously.
+    #[cfg(feature = "draw_target_sync")]
+    pub async fn draw_stroke_sync<T: DrawTargetSync>(
         &self,
         target: &mut T,
         stroke_color: T::Color,
     ) -> Result<(), T::Error> {
-        self.stroke_left().draw(target, stroke_color).await?;
-        self.stroke_right().draw(target, stroke_color).await
+        self.stroke_left().draw_sync(target, stroke_color)?;
+        self.stroke_right().draw_sync(target, stroke_color)
     }
 
-    /// Draws the stroke and fill regions.
-    #[maybe_async::maybe_async]
-    pub async fn draw_stroke_and_fill<T: DrawTarget>(
+    /// Draws the stroke regions asynchronously.
+    #[cfg(feature = "draw_target_async")]
+    pub async fn draw_stroke_async<T: DrawTargetAsync>(
+        &self,
+        target: &mut T,
+        stroke_color: T::Color,
+    ) -> Result<(), T::Error> {
+        self.stroke_left().draw_async(target, stroke_color).await?;
+        self.stroke_right().draw_async(target, stroke_color).await
+    }
+
+    /// Draws the stroke and fill regions synchronously.
+    #[cfg(feature = "draw_target_sync")]
+    pub async fn draw_stroke_and_fill_sync<T: DrawTargetSync>(
         &self,
         target: &mut T,
         stroke_color: T::Color,
         fill_color: T::Color,
     ) -> Result<(), T::Error> {
-        self.stroke_left().draw(target, stroke_color).await?;
-        self.fill().draw(target, fill_color).await?;
-        self.stroke_right().draw(target, stroke_color).await
+        self.stroke_left().draw_sync(target, stroke_color)?;
+        self.fill().draw_sync(target, fill_color)?;
+        self.stroke_right().draw_sync(target, stroke_color)
+    }
+
+    /// Draws the stroke and fill regions asynchronously.
+    #[cfg(feature = "draw_target_async")]
+    pub async fn draw_stroke_and_fill_async<T: DrawTargetAsync>(
+        &self,
+        target: &mut T,
+        stroke_color: T::Color,
+        fill_color: T::Color,
+    ) -> Result<(), T::Error> {
+        self.stroke_left().draw_async(target, stroke_color).await?;
+        self.fill().draw_async(target, fill_color).await?;
+        self.stroke_right().draw_async(target, stroke_color).await
     }
 }

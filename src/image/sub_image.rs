@@ -1,7 +1,11 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, ImageDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::{draw_target::DrawTarget, image::ImageDrawable};
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Dimensions, OriginDimensions},
-    image::ImageDrawable,
     primitives::Rectangle,
     transform::Transform,
 };
@@ -23,6 +27,12 @@ pub struct SubImage<'a, T> {
     area: Rectangle,
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(ImageDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, T> SubImage<'a, T>
 where
     T: ImageDrawable,
@@ -44,7 +54,12 @@ impl<T> OriginDimensions for SubImage<'_, T> {
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, ImageDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, T> ImageDrawable for SubImage<'a, T>
 where
     T: ImageDrawable,
@@ -82,6 +97,12 @@ mod tests {
         expected_area: Rectangle,
     }
 
+    #[maybe_async_cfg::maybe(
+        keep_self,
+        idents(DrawTarget, ImageDrawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
     impl ImageDrawable for MockImageDrawable {
         type Color = BinaryColor;
 

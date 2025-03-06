@@ -1,9 +1,20 @@
 use core::marker::PhantomData;
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(ImageDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::image::ImageDrawable;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Dimensions, OriginDimensions, Point, Size},
-    image::{GetPixel, ImageDrawable},
+    image::GetPixel,
     iterator::raw::RawDataSlice,
     pixelcolor::{
         raw::{BigEndianLsb0, DataOrder, LittleEndianMsb0, RawData},
@@ -73,7 +84,7 @@ pub enum ImageRawError {
 /// // by using the turbofish syntax.
 /// let raw_image = ImageRaw::<BinaryColor>::new(DATA, Size::new(12, 5)).unwrap();
 ///
-/// let image = Image::new(&raw_image, Point::zero());
+/// let image = ImageSync::new(&raw_image, Point::zero());
 ///
 /// let mut display = Display::default();
 ///
@@ -198,7 +209,12 @@ const fn bytes_per_row(width: u32, bits_per_pixel: usize) -> usize {
     (width as usize * bits_per_pixel + 7) / 8
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, ImageDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, C, O> ImageDrawable for ImageRaw<'a, C, O>
 where
     C: PixelColor,
@@ -350,15 +366,36 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(DrawTarget),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::draw_target::DrawTarget;
+    #[maybe_async_cfg::maybe(
+        idents(Image),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::image::Image;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
-        draw_target::DrawTarget,
         geometry::Point,
-        image::Image,
-        iterator::PixelIteratorExt,
         mock_display::{ColorMapping, MockDisplay},
         pixelcolor::{raw::RawU32, *},
-        Drawable, Pixel,
+        Pixel,
     };
+    #[maybe_async_cfg::maybe(
+        idents(PixelIteratorExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::iterator::PixelIteratorExt;
 
     #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
     struct TestColorU32(RawU32);
@@ -386,7 +423,7 @@ mod tests {
         O: DataOrder,
         for<'a> RawDataSlice<'a, C::Raw, O>: IntoIterator<Item = C::Raw>,
     {
-        let image = Image::new(&image_data, Point::zero());
+        let image = ImageSync::new(&image_data, Point::zero());
         let mut display = MockDisplay::new();
         image.draw(&mut display).unwrap();
 
@@ -506,7 +543,7 @@ mod tests {
         let image_data: ImageRaw<Gray8> = ImageRaw::new(&data, Size::new(4, 1)).unwrap();
 
         let mut display = MockDisplay::new();
-        Image::new(&image_data, Point::zero())
+        ImageSync::new(&image_data, Point::zero())
             .draw(&mut display)
             .unwrap();
 
@@ -622,7 +659,7 @@ mod tests {
         let image_data: ImageRawLE<TestColorU32> = ImageRaw::new(&data, Size::new(2, 2)).unwrap();
 
         let mut display = MockDisplay::new();
-        Image::new(&image_data, Point::zero())
+        ImageSync::new(&image_data, Point::zero())
             .draw(&mut display)
             .unwrap();
 
@@ -655,7 +692,7 @@ mod tests {
         let image_data: ImageRawBE<TestColorU32> = ImageRaw::new(&data, Size::new(4, 1)).unwrap();
 
         let mut display = MockDisplay::new();
-        Image::new(&image_data, Point::zero())
+        ImageSync::new(&image_data, Point::zero())
             .draw(&mut display)
             .unwrap();
 
@@ -683,7 +720,7 @@ mod tests {
         assert_eq!(image.size, Size::new(0, 10));
 
         let mut display = MockDisplay::new();
-        Image::new(&image, Point::zero())
+        ImageSync::new(&image, Point::zero())
             .draw(&mut display)
             .unwrap();
 
@@ -696,7 +733,7 @@ mod tests {
         assert_eq!(image.size, Size::new(5, 0));
 
         let mut display = MockDisplay::new();
-        Image::new(&image, Point::zero())
+        ImageSync::new(&image, Point::zero())
             .draw(&mut display)
             .unwrap();
 

@@ -1,5 +1,10 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
 use crate::{
-    draw_target::DrawTarget,
     geometry::{Point, Size},
     primitives::{Line, PointsIter, Rectangle},
 };
@@ -137,7 +142,11 @@ impl Scanline {
     }
 
     /// Draws the scanline.
-    #[maybe_async::maybe_async]
+    #[maybe_async_cfg::maybe(
+        idents(DrawTarget),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
     pub async fn draw<T>(&self, target: &mut T, color: T::Color) -> Result<(), T::Error>
     where
         T: DrawTarget,

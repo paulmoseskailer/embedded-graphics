@@ -1,9 +1,20 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
+#[maybe_async_cfg::maybe(
+    idents(StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::styled::StyledDrawable;
 use crate::{
-    draw_target::DrawTarget,
     pixelcolor::PixelColor,
     primitives::{
         line::{thick_points::ThickPoints, Line, StrokeOffset},
-        styled::{StyledDimensions, StyledDrawable, StyledPixels},
+        styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle, Rectangle,
     },
     Pixel,
@@ -52,7 +63,12 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Line {
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Line {
     type Color = C;
     type Output = ();
@@ -98,8 +114,13 @@ mod tests {
         mock_display::MockDisplay,
         pixelcolor::{Rgb888, RgbColor},
         primitives::{Primitive, PrimitiveStyleBuilder},
-        Drawable,
     };
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     #[test]
     fn bounding_box() {

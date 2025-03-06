@@ -28,6 +28,11 @@ pub use self::{
 };
 use crate::geometry::{Dimensions, Point};
 pub use embedded_graphics_core::primitives::PointsIter;
+#[maybe_async_cfg::maybe(
+    idents(StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use styled::{Styled, StyledDimensions, StyledDrawable};
 
 /// Primitive trait

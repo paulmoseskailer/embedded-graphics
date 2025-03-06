@@ -1,5 +1,10 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, DrawTargetExt, Translated),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::{DrawTarget, DrawTargetExt, Translated};
 use crate::{
-    draw_target::{DrawTarget, DrawTargetExt, Translated},
     geometry::{OriginDimensions, Size},
     primitives::Rectangle,
     Pixel,
@@ -11,6 +16,11 @@ use crate::{
 /// See the [`cropped`] method documentation for more.
 ///
 /// [`cropped`]: DrawTargetExt::cropped
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, Translated),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Debug)]
 pub struct Cropped<'a, T>
 where
@@ -20,6 +30,11 @@ where
     size: Size,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, T> Cropped<'a, T>
 where
     T: DrawTarget,
@@ -34,7 +49,11 @@ where
     }
 }
 
-#[maybe_async::maybe_async(AFIT)]
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, Cropped),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T> DrawTarget for Cropped<'_, T>
 where
     T: DrawTarget,
@@ -65,6 +84,11 @@ where
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<T> OriginDimensions for Cropped<'_, T>
 where
     T: DrawTarget,
@@ -76,15 +100,26 @@ where
 
 #[cfg(test)]
 mod tests {
+    #[maybe_async_cfg::maybe(
+        idents(DrawTarget, DrawTargetExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::draw_target::{DrawTarget, DrawTargetExt};
     use crate::{
-        draw_target::{DrawTarget, DrawTargetExt},
         geometry::Dimensions,
         geometry::{Point, Size},
         mock_display::MockDisplay,
         pixelcolor::BinaryColor,
         primitives::{Primitive, PrimitiveStyle, Rectangle},
-        Drawable, Pixel,
+        Pixel,
     };
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
 
     #[test]
     fn draw_iter() {

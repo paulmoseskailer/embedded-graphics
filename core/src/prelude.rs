@@ -1,11 +1,14 @@
 //! Prelude
-
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, Drawable, ImageDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+pub use crate::{draw_target::DrawTarget, drawable::Drawable, image::ImageDrawable};
 #[doc(no_inline)]
 pub use crate::{
-    draw_target::DrawTarget,
-    drawable::{Drawable, Pixel},
+    drawable::Pixel,
     geometry::{Dimensions, OriginDimensions, Point, Size},
-    image::ImageDrawable,
     pixelcolor::{
         raw::{RawData, ToBytes as _},
         GrayColor, IntoStorage, PixelColor, RgbColor, WebColors,
