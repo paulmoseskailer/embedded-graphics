@@ -1,12 +1,21 @@
+#[maybe_async_cfg::maybe(
+    idents(Drawable, DrawTarget, StyledDrawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::{draw_target::DrawTarget, primitives::StyledDrawable, Drawable};
 use embedded_graphics::{
-    mock_display::MockDisplay,
-    pixelcolor::Rgb888,
-    prelude::*,
-    primitives::{Rectangle, StyledDrawable},
+    mock_display::MockDisplay, pixelcolor::Rgb888, prelude::*, primitives::Rectangle,
 };
 
 struct CheckerboardStyle<C>(C, C);
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(StyledDrawable, DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledDrawable<CheckerboardStyle<C>> for Rectangle {
     type Color = C;
     type Output = ();

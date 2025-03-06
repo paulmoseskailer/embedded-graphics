@@ -1,5 +1,11 @@
 extern crate embedded_graphics;
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget, PixelIteratorExt),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::{draw_target::DrawTarget, iterator::PixelIteratorExt};
 use embedded_graphics::{
     pixelcolor::raw::RawU1,
     prelude::*,
@@ -33,11 +39,17 @@ impl From<TestPixelColor> for RawU1 {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl DrawTarget for FakeDisplay {
     type Color = TestPixelColor;
     type Error = core::convert::Infallible;
 
-    fn draw_iter<I>(&mut self, _pixels: I) -> Result<(), Self::Error>
+    async fn draw_iter<I>(&mut self, _pixels: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {

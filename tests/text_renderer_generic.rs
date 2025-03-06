@@ -3,15 +3,25 @@ use embedded_graphics::{
     pixelcolor::Rgb888,
     prelude::*,
     primitives::Rectangle,
-    text::{
-        renderer::{TextMetrics, TextRenderer},
-        Baseline, Text,
-    },
+    text::{renderer::TextMetrics, Baseline, Text},
 };
+
+#[maybe_async_cfg::maybe(
+    idents(Drawable, DrawTarget, TextRenderer),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::{draw_target::DrawTarget, text::renderer::TextRenderer, Drawable};
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 struct GenericTextStyle<C>(C);
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget, TextRenderer),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> TextRenderer for GenericTextStyle<C> {
     type Color = C;
 
