@@ -1,8 +1,10 @@
 //! `Drawable` trait and helpers
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::{draw_target::DrawTarget, geometry::Point, pixelcolor::PixelColor};
 
@@ -70,9 +72,11 @@ use crate::{draw_target::DrawTarget, geometry::Point, pixelcolor::PixelColor};
 /// [`DrawTarget`]: crate::draw_target::DrawTarget
 /// [`draw_iter`]: crate::draw_target::DrawTarget::draw_iter
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub trait Drawable {
     /// The pixel color type.
@@ -155,9 +159,12 @@ where
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(Drawable, DrawTarget),
+    idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<C> Drawable for Pixel<C>
 where

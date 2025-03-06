@@ -1,27 +1,12 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
+    idents(Image, TextRenderer, Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
-use crate::draw_target::DrawTarget;
-#[maybe_async_cfg::maybe(
-    idents(Image),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::image::Image;
-#[maybe_async_cfg::maybe(
-    idents(TextRenderer),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::text::renderer::TextRenderer;
-#[maybe_async_cfg::maybe(
-    idents(Drawable),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::Drawable;
+use crate::{draw_target::DrawTarget, image::Image, text::renderer::TextRenderer, Drawable};
 use crate::{
     geometry::{Point, Size},
     mono_font::{
@@ -71,9 +56,11 @@ pub struct MonoTextStyle<'a, C> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<'a, C> MonoTextStyle<'a, C>
 where
@@ -215,9 +202,12 @@ where
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget, TextRenderer),
+    idents(TextRenderer),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<C> TextRenderer for MonoTextStyle<'_, C>
 where

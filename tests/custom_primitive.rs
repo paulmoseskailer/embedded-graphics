@@ -1,7 +1,10 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, StyledDrawable, Drawable),
+    idents(StyledDrawable, Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use embedded_graphics::{draw_target::DrawTarget, primitives::StyledDrawable, Drawable};
 use embedded_graphics::{
@@ -36,9 +39,12 @@ impl Dimensions for Square {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget, StyledDrawable),
+    idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Square {
     type Color = C;

@@ -1,7 +1,10 @@
 #[maybe_async_cfg::maybe(
-    idents(Drawable, DrawTarget, StyledDrawable),
+    idents(Drawable, StyledDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use embedded_graphics::{draw_target::DrawTarget, primitives::StyledDrawable, Drawable};
 use embedded_graphics::{
@@ -12,9 +15,12 @@ struct CheckerboardStyle<C>(C, C);
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(StyledDrawable, DrawTarget),
+    idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<C: PixelColor> StyledDrawable<CheckerboardStyle<C>> for Rectangle {
     type Color = C;

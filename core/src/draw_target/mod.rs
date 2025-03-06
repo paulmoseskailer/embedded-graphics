@@ -279,8 +279,11 @@ use crate::{
 /// [`OriginDimensions`]: super::geometry::OriginDimensions
 /// [`Error` type]: DrawTarget::Error
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(DrawTarget(sync = "DrawTarget"))),
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub trait DrawTarget: Dimensions {
     /// The pixel color type the targetted display supports.

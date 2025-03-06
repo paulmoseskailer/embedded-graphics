@@ -1,15 +1,12 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::draw_target::DrawTarget;
-#[maybe_async_cfg::maybe(
     idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
-use crate::Drawable;
+use crate::{draw_target::DrawTarget, Drawable};
 use crate::{
     geometry::{Dimensions, Point},
     pixelcolor::PixelColor,
@@ -122,9 +119,12 @@ impl<T: StyledDimensions<S>, S> Dimensions for Styled<T, S> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(StyledDrawable, Drawable, DrawTarget),
+    idents(StyledDrawable, Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<T: StyledDrawable<S>, S> Drawable for Styled<T, S> {
     type Color = T::Color;
@@ -155,9 +155,11 @@ impl<T: Transform, S: Clone> Transform for Styled<T, S> {
 
 /// Styled drawable.
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub trait StyledDrawable<S> {
     /// Color type.

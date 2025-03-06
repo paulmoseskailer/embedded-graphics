@@ -1,7 +1,10 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, DrawTargetExt, Translated),
+    idents(DrawTargetExt, Translated),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::{DrawTarget, DrawTargetExt, Translated};
 use crate::{
@@ -17,9 +20,12 @@ use crate::{
 ///
 /// [`cropped`]: DrawTargetExt::cropped
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, Translated),
+    idents(Translated),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 #[derive(Debug)]
 pub struct Cropped<'a, T>
@@ -31,9 +37,11 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<'a, T> Cropped<'a, T>
 where
@@ -50,9 +58,12 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, Cropped),
+    idents(Cropped),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<T> DrawTarget for Cropped<'_, T>
 where
@@ -85,9 +96,11 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<T> OriginDimensions for Cropped<'_, T>
 where
@@ -101,9 +114,12 @@ where
 #[cfg(test)]
 mod tests {
     #[maybe_async_cfg::maybe(
-        idents(DrawTarget, DrawTargetExt),
+        idents(DrawTargetExt),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(DrawTarget(async = "DrawTargetAsync"))
+        )
     )]
     use crate::draw_target::{DrawTarget, DrawTargetExt};
     #[maybe_async_cfg::maybe(

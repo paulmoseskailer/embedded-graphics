@@ -1,7 +1,9 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::DrawTarget;
 use crate::{geometry::Dimensions, pixelcolor::PixelColor, primitives::Rectangle, Pixel};
@@ -28,9 +30,11 @@ pub struct ColorConverted<'a, T, C> {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<'a, T, C> ColorConverted<'a, T, C>
 where
@@ -46,9 +50,12 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, ColorConverted),
+    idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<T, C> DrawTarget for ColorConverted<'_, T, C>
 where
@@ -90,9 +97,11 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<T, C> Dimensions for ColorConverted<'_, T, C>
 where

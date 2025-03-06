@@ -1,9 +1,11 @@
 //! Image drawable.
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::DrawTarget;
 use crate::{
@@ -28,9 +30,11 @@ use crate::{
 /// [`Image`]: https://docs.rs/embedded-graphics/latest/embedded_graphics/image/struct.Image.html
 /// [`OriginDimensions`]: crate::geometry::OriginDimensions
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub trait ImageDrawable: OriginDimensions {
     /// The color type.

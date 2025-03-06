@@ -1,7 +1,10 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, ImageDrawable),
+    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::{draw_target::DrawTarget, image::ImageDrawable};
 use crate::{
@@ -56,9 +59,12 @@ impl<T> OriginDimensions for SubImage<'_, T> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget, ImageDrawable),
+    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<'a, T> ImageDrawable for SubImage<'a, T>
 where
@@ -99,9 +105,12 @@ mod tests {
 
     #[maybe_async_cfg::maybe(
         keep_self,
-        idents(DrawTarget, ImageDrawable),
+        idents(ImageDrawable),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(DrawTarget(async = "DrawTargetAsync"))
+        )
     )]
     impl ImageDrawable for MockImageDrawable {
         type Color = BinaryColor;

@@ -1,9 +1,12 @@
 //! Prelude
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, DrawTargetExt),
+    idents(DrawTargetExt),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::{DrawTarget, DrawTargetExt};
 #[maybe_async_cfg::maybe(

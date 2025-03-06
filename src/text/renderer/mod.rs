@@ -11,9 +11,11 @@
 //! [eg-seven-segment]: https://github.com/embedded-graphics/eg-seven-segment
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::DrawTarget;
 use crate::{geometry::Point, pixelcolor::PixelColor, primitives::Rectangle, text::Baseline};
@@ -27,9 +29,11 @@ pub use character_style::CharacterStyle;
 /// The `TextRenderer` trait is used to integrate text renderers into embedded-graphics. Users should
 /// not call it directly and instead use the functions provided by the `Text` type.
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub trait TextRenderer {
     /// Color type.

@@ -1,9 +1,12 @@
 extern crate embedded_graphics;
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, PixelIteratorExt),
+    idents(PixelIteratorExt),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use embedded_graphics::{draw_target::DrawTarget, iterator::PixelIteratorExt};
 use embedded_graphics::{
@@ -41,9 +44,11 @@ impl From<TestPixelColor> for RawU1 {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl DrawTarget for FakeDisplay {
     type Color = TestPixelColor;

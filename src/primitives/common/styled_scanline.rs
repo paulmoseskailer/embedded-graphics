@@ -1,23 +1,14 @@
 use core::ops::Range;
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
+    idents(PixelIteratorExt, Scanline),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
-use crate::draw_target::DrawTarget;
-#[maybe_async_cfg::maybe(
-    idents(PixelIteratorExt),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::iterator::PixelIteratorExt;
-#[maybe_async_cfg::maybe(
-    idents(Scanline),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::primitives::common::Scanline;
+use crate::{draw_target::DrawTarget, iterator::PixelIteratorExt, primitives::common::Scanline};
 
 /// Scanline with stroke and fill regions.
 #[maybe_async_cfg::maybe(
@@ -33,9 +24,12 @@ pub struct StyledScanline {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Scanline, DrawTarget),
+    idents(Scanline),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl StyledScanline {
     /// Creates a new styled scanline.

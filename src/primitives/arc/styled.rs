@@ -1,7 +1,10 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, DrawTargetExt),
+    idents(DrawTargetExt),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::{DrawTarget, DrawTargetExt};
 #[maybe_async_cfg::maybe(
@@ -82,9 +85,12 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget, StyledDrawable),
+    idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Arc {
     type Color = C;
@@ -125,9 +131,11 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Arc {
 mod tests {
     use super::*;
     #[maybe_async_cfg::maybe(
-        idents(DrawTarget),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(DrawTarget(async = "DrawTargetAsync"))
+        )
     )]
     use crate::draw_target::DrawTarget;
     #[maybe_async_cfg::maybe(

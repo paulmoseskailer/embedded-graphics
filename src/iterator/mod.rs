@@ -5,9 +5,11 @@ pub mod pixel;
 pub mod raw;
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::DrawTarget;
 use crate::{geometry::Point, pixelcolor::PixelColor, primitives::Rectangle, Pixel};
@@ -34,9 +36,11 @@ where
 
 /// Extension trait for pixel iterators.
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub trait PixelIteratorExt<C>
 where
@@ -54,9 +58,12 @@ where
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget, PixelIteratorExt),
+    idents(PixelIteratorExt),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<I, C> PixelIteratorExt<C> for I
 where

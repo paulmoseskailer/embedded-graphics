@@ -1,8 +1,10 @@
 use criterion::*;
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use embedded_graphics::draw_target::DrawTarget;
 use embedded_graphics::{

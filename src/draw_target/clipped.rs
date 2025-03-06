@@ -1,7 +1,9 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::DrawTarget;
 use crate::{
@@ -16,9 +18,11 @@ use crate::{
 ///
 /// [`clipped`]: crate::draw_target::DrawTargetExt::clipped
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 #[derive(Debug)]
 pub struct Clipped<'a, T>
@@ -30,9 +34,11 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<'a, T> Clipped<'a, T>
 where
@@ -46,9 +52,11 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<T> DrawTarget for Clipped<'_, T>
 where
@@ -95,9 +103,11 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<T> Dimensions for Clipped<'_, T>
 where
@@ -111,9 +121,12 @@ where
 #[cfg(test)]
 mod tests {
     #[maybe_async_cfg::maybe(
-        idents(Drawable, DrawTarget, DrawTargetExt),
+        idents(Drawable, DrawTargetExt),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(DrawTarget(async = "DrawTargetAsync"))
+        )
     )]
     use crate::{
         draw_target::{DrawTarget, DrawTargetExt},

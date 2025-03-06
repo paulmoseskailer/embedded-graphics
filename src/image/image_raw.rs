@@ -1,9 +1,11 @@
 use core::marker::PhantomData;
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::DrawTarget;
 #[maybe_async_cfg::maybe(
@@ -211,9 +213,12 @@ const fn bytes_per_row(width: u32, bits_per_pixel: usize) -> usize {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget, ImageDrawable),
+    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<'a, C, O> ImageDrawable for ImageRaw<'a, C, O>
 where
@@ -367,29 +372,14 @@ where
 mod tests {
     use super::*;
     #[maybe_async_cfg::maybe(
-        idents(DrawTarget),
+        idents(Image, Drawable, PixelIteratorExt),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(DrawTarget(async = "DrawTargetAsync"))
+        )
     )]
-    use crate::draw_target::DrawTarget;
-    #[maybe_async_cfg::maybe(
-        idents(Image),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
-    )]
-    use crate::image::Image;
-    #[maybe_async_cfg::maybe(
-        idents(PixelIteratorExt),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
-    )]
-    use crate::iterator::PixelIteratorExt;
-    #[maybe_async_cfg::maybe(
-        idents(Drawable),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
-    )]
-    use crate::Drawable;
+    use crate::{draw_target::DrawTarget, image::Image, iterator::PixelIteratorExt, Drawable};
     use crate::{
         geometry::Point,
         mock_display::{ColorMapping, MockDisplay},

@@ -1,7 +1,9 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use embedded_graphics::draw_target::DrawTarget;
 use embedded_graphics::prelude::*;
@@ -49,9 +51,11 @@ where
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<C> DrawTarget for Framebuffer<C>
 where

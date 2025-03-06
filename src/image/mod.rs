@@ -110,9 +110,12 @@ pub use image_raw::{ImageRaw, ImageRawBE, ImageRawError, ImageRawLE};
 pub use sub_image::SubImage;
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, DrawTargetExt, Drawable),
+    idents(DrawTargetExt, Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::{
     draw_target::{DrawTarget, DrawTargetExt},
@@ -246,9 +249,12 @@ impl<T> Transform for Image<'_, T> {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Drawable, DrawTarget, ImageDrawable),
+    idents(Drawable, ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<'a, T> Drawable for Image<'a, T>
 where

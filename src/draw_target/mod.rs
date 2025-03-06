@@ -33,17 +33,22 @@ pub use cropped::Cropped;
 pub use translated::Translated;
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub use embedded_graphics_core::draw_target::DrawTarget;
 
 /// Extension trait for `DrawTarget`s.
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, Clipped, Translated, Cropped, ColorConverted),
+    idents(Clipped, Translated, Cropped, ColorConverted),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub trait DrawTargetExt: DrawTarget + Sized {
     /// Creates a translated draw target based on this draw target.
@@ -244,16 +249,12 @@ pub trait DrawTargetExt: DrawTarget + Sized {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(
-        DrawTarget,
-        DrawTargetExt,
-        Clipped,
-        Cropped,
-        Translated,
-        ColorConverted
-    ),
+    idents(DrawTargetExt, Clipped, Cropped, Translated, ColorConverted),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<T> DrawTargetExt for T
 where
@@ -282,9 +283,12 @@ where
 #[cfg(test)]
 mod tests {
     #[maybe_async_cfg::maybe(
-        idents(DrawTarget, DrawTargetExt),
+        idents(DrawTargetExt),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(DrawTarget(async = "DrawTargetAsync"))
+        )
     )]
     use crate::draw_target::{DrawTarget, DrawTargetExt};
     #[maybe_async_cfg::maybe(

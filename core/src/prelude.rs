@@ -1,8 +1,11 @@
 //! Prelude
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget, Drawable, ImageDrawable),
+    idents(Drawable, ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 pub use crate::{draw_target::DrawTarget, drawable::Drawable, image::ImageDrawable};
 #[doc(no_inline)]

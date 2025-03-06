@@ -3,9 +3,11 @@
 use core::{convert::Infallible, marker::PhantomData};
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::DrawTarget;
 use crate::{
@@ -174,9 +176,11 @@ macro_rules! impl_bit {
 
         #[maybe_async_cfg::maybe(
             keep_self,
-            idents(DrawTarget),
             sync(feature = "draw_target_sync"),
-            async(feature = "draw_target_async")
+            async(
+                feature = "draw_target_async",
+                idents(DrawTarget(async = "DrawTargetAsync"))
+            )
         )]
         impl<C, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
             for Framebuffer<C, $raw_type, BO, WIDTH, HEIGHT, N>
@@ -226,9 +230,11 @@ where
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<C, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
     for Framebuffer<C, RawU8, BO, WIDTH, HEIGHT, N>
@@ -279,9 +285,11 @@ macro_rules! impl_bytes {
 
         #[maybe_async_cfg::maybe(
             keep_self,
-            idents(DrawTarget),
             sync(feature = "draw_target_sync"),
-            async(feature = "draw_target_async")
+            async(
+                feature = "draw_target_async",
+                idents(DrawTarget(async = "DrawTargetAsync"))
+            )
         )]
         impl<C, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
             for Framebuffer<C, $raw_type, $bo_type, WIDTH, HEIGHT, N>

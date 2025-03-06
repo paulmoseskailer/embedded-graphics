@@ -1,7 +1,9 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use crate::draw_target::DrawTarget;
 #[maybe_async_cfg::maybe(
@@ -171,9 +173,12 @@ impl<S: TextRenderer> Text<'_, S> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(Drawable, DrawTarget, TextRenderer),
+    idents(Drawable, TextRenderer),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<S: TextRenderer> Drawable for Text<'_, S> {
     type Color = S::Color;

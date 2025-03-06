@@ -58,9 +58,11 @@ impl ContainsPoint for EllipseQuadrant {
 mod tests {
     use super::*;
     #[maybe_async_cfg::maybe(
-        idents(DrawTarget),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(DrawTarget(async = "DrawTargetAsync"))
+        )
     )]
     use crate::draw_target::DrawTarget;
     #[maybe_async_cfg::maybe(
@@ -78,9 +80,11 @@ mod tests {
     };
 
     #[maybe_async_cfg::maybe(
-        idents(DrawTarget),
         sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
+        async(
+            feature = "draw_target_async",
+            idents(DrawTarget(async = "DrawTargetAsync"))
+        )
     )]
     fn draw_quadrant<D: DrawTarget<Color = BinaryColor>>(
         quadrant: &EllipseQuadrant,

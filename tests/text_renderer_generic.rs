@@ -7,9 +7,12 @@ use embedded_graphics::{
 };
 
 #[maybe_async_cfg::maybe(
-    idents(Drawable, DrawTarget, TextRenderer),
+    idents(Drawable, TextRenderer),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 use embedded_graphics::{draw_target::DrawTarget, text::renderer::TextRenderer, Drawable};
 
@@ -18,9 +21,12 @@ struct GenericTextStyle<C>(C);
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(DrawTarget, TextRenderer),
+    idents(TextRenderer),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(DrawTarget(async = "DrawTargetAsync"))
+    )
 )]
 impl<C: PixelColor> TextRenderer for GenericTextStyle<C> {
     type Color = C;
