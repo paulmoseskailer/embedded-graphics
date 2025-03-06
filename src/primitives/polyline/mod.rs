@@ -12,6 +12,11 @@ mod scanline_iterator;
 mod styled;
 
 pub use points::Points;
+#[maybe_async_cfg::maybe(
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use styled::StyledPixelsIterator;
 
 /// Polyline primitive

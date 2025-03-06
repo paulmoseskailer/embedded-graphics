@@ -11,7 +11,17 @@ use crate::{
 mod points;
 mod styled;
 
+#[maybe_async_cfg::maybe(
+    idents(Points),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use points::Points;
+#[maybe_async_cfg::maybe(
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use styled::StyledPixelsIterator;
 
 /// Circle primitive
@@ -118,6 +128,12 @@ impl OffsetOutline for Circle {
 
 impl Primitive for Circle {}
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(Points),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl PointsIter for Circle {
     type Iter = Points;
 

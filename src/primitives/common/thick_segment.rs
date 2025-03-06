@@ -1,19 +1,31 @@
 //! A line segment constructed from two line joints.
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::Scanline;
 use crate::{
     geometry::Dimensions,
-    primitives::{
-        common::{LineJoin, Scanline},
-        Line, Rectangle,
-    },
+    primitives::{common::LineJoin, Line, Rectangle},
 };
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Debug, Clone, Copy)]
 pub struct ThickSegment {
     start_join: LineJoin,
     end_join: LineJoin,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl ThickSegment {
     /// Create a new thick segment from two joints.
     pub const fn new(start_join: LineJoin, end_join: LineJoin) -> Self {

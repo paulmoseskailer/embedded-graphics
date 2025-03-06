@@ -177,6 +177,11 @@ where
 #[cfg(test)]
 mod tests {
     // NOTE: `crate` cannot be used here due to circular dependency resolution behavior.
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
     use embedded_graphics::{
         geometry::Point, mock_display::MockDisplay, pixelcolor::BinaryColor, Drawable, Pixel,
     };

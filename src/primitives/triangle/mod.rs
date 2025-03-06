@@ -2,10 +2,16 @@
 
 use core::cmp::{max, min, Ordering};
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::Scanline;
 use crate::{
     geometry::{Dimensions, Point},
     primitives::{
-        common::{LineJoin, LineSide, LinearEquation, Scanline, StrokeOffset},
+        common::{LineJoin, LineSide, LinearEquation, StrokeOffset},
         ContainsPoint, Line, PointsIter, Primitive, Rectangle,
     },
     transform::Transform,
@@ -16,7 +22,17 @@ mod scanline_intersections;
 mod scanline_iterator;
 mod styled;
 
+#[maybe_async_cfg::maybe(
+    idents(Points),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use points::Points;
+#[maybe_async_cfg::maybe(
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use styled::StyledPixelsIterator;
 
 /// Triangle primitive
@@ -64,6 +80,10 @@ pub use styled::StyledPixelsIterator;
 /// ```
 ///
 /// [`from_slice`]: Triangle::from_slice()
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Triangle {
@@ -71,8 +91,17 @@ pub struct Triangle {
     pub vertices: [Point; 3],
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Primitive for Triangle {}
 
+#[maybe_async_cfg::maybe(
+    idents(Points),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl PointsIter for Triangle {
     type Iter = Points;
 
@@ -81,6 +110,10 @@ impl PointsIter for Triangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl ContainsPoint for Triangle {
     fn contains(&self, point: Point) -> bool {
         // Skip expensive calculations below if point is outside the bounding box
@@ -138,6 +171,10 @@ impl ContainsPoint for Triangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Dimensions for Triangle {
     fn bounding_box(&self) -> Rectangle {
         let [p1, p2, p3] = self.vertices;
@@ -152,6 +189,11 @@ impl Dimensions for Triangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Triangle {
     /// Create a new triangle with the given vertices.
     pub const fn new(vertex1: Point, vertex2: Point, vertex3: Point) -> Self {
@@ -281,6 +323,10 @@ impl Triangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Transform for Triangle {
     /// Translate the triangle from its current position to a new position by (x, y) pixels,
     /// returning a new `Triangle`. For a mutating transform, see `translate_mut`.
@@ -332,6 +378,11 @@ const fn sort_two_yx(p1: Point, p2: Point) -> (Point, Point) {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -10,6 +10,11 @@ use crate::draw_target::DrawTarget;
     async(feature = "draw_target_async")
 )]
 use crate::primitives::styled::StyledDrawable;
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ScanlineIterator, Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 use crate::{
     geometry::{Dimensions, Point},
     pixelcolor::PixelColor,
@@ -23,6 +28,11 @@ use crate::{
 };
 
 /// Pixel iterator for each pixel in the triangle border
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ScanlineIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct StyledPixelsIterator<C> {
@@ -33,6 +43,11 @@ pub struct StyledPixelsIterator<C> {
     stroke_color: Option<C>,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ScanlineIterator, Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledPixelsIterator<C> {
     pub(in crate::primitives) fn new(primitive: &Triangle, style: &PrimitiveStyle<C>) -> Self {
         let mut lines_iter = ScanlineIterator::new(
@@ -62,6 +77,10 @@ impl<C: PixelColor> StyledPixelsIterator<C> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
     type Item = Pixel<C>;
 
@@ -83,6 +102,11 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Triangle {
     type Iter = StyledPixelsIterator<C>;
 
@@ -92,8 +116,7 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Triangle {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
-    idents(DrawTarget, StyledDrawable),
+    idents(DrawTarget, StyledDrawable, ScanlineIterator),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
@@ -138,6 +161,10 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Triangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Triangle {
     fn styled_bounding_box(&self, style: &PrimitiveStyle<C>) -> Rectangle {
         // Short circuit special cases
@@ -171,6 +198,11 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Triangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

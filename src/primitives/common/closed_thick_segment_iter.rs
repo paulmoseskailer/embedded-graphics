@@ -2,8 +2,14 @@
 
 use crate::{
     geometry::Point,
-    primitives::common::{LineJoin, StrokeOffset, ThickSegment},
+    primitives::common::{LineJoin, StrokeOffset},
 };
+#[maybe_async_cfg::maybe(
+    idents(ThickSegment),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::ThickSegment;
 
 /// Closed shape thick segments iterator.
 ///
@@ -88,6 +94,12 @@ impl<'a> ClosedThickSegmentIter<'a> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(ThickSegment),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a> Iterator for ClosedThickSegmentIter<'a> {
     type Item = ThickSegment;
 

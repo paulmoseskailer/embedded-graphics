@@ -1,8 +1,14 @@
 //! An iterator over all line intersections with a given scanline.
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ThickSegment),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::{Scanline, ThickSegment};
 use crate::{
     geometry::Point,
-    primitives::common::{LineJoin, Scanline, StrokeOffset, ThickSegment},
+    primitives::common::{LineJoin, StrokeOffset},
 };
 
 /// Scanline intersections iterator.
@@ -11,6 +17,11 @@ use crate::{
 /// defined by the `points` parameter.
 ///
 /// The result is one line of a filled polygon.
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct ScanlineIntersections<'a> {
@@ -23,6 +34,11 @@ pub struct ScanlineIntersections<'a> {
 
 const EMPTY: &[Point; 3] = &[Point::zero(); 3];
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ThickSegment),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a> ScanlineIntersections<'a> {
     /// New
     pub fn new(points: &'a [Point], width: u32, scanline_y: i32) -> Self {
@@ -103,6 +119,11 @@ impl<'a> ScanlineIntersections<'a> {
 ///      ⇓
 /// A---A B---B
 /// ```
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a> Iterator for ScanlineIntersections<'a> {
     type Item = Scanline;
 

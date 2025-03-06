@@ -15,6 +15,12 @@ pub mod triangle;
 
 #[doc(no_inline)]
 pub use self::rectangle::Rectangle;
+#[maybe_async_cfg::maybe(
+    idents(Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use self::triangle::Triangle;
 pub use self::{
     arc::Arc,
     circle::Circle,
@@ -24,7 +30,6 @@ pub use self::{
     primitive_style::{PrimitiveStyle, PrimitiveStyleBuilder, StrokeAlignment},
     rounded_rectangle::{CornerRadii, CornerRadiiBuilder, RoundedRectangle},
     sector::Sector,
-    triangle::Triangle,
 };
 use crate::geometry::{Dimensions, Point};
 pub use embedded_graphics_core::primitives::PointsIter;

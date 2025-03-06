@@ -5,6 +5,12 @@
 )]
 use crate::draw_target::DrawTarget;
 #[maybe_async_cfg::maybe(
+    idents(Scanline, StyledScanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::{Scanline, StyledScanline};
+#[maybe_async_cfg::maybe(
     idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
@@ -15,7 +21,6 @@ use crate::{
     pixelcolor::PixelColor,
     primitives::{
         circle::{points::Scanlines, Circle},
-        common::{Scanline, StyledScanline},
         rectangle::Rectangle,
         styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle,
@@ -25,6 +30,11 @@ use crate::{
 use az::SaturatingAs;
 
 /// Pixel iterator for each pixel in the circle border
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct StyledPixelsIterator<C> {
@@ -38,6 +48,11 @@ pub struct StyledPixelsIterator<C> {
     fill_color: Option<C>,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledPixelsIterator<C> {
     pub(in crate::primitives) fn new(primitive: &Circle, style: &PrimitiveStyle<C>) -> Self {
         let stroke_area = style.stroke_area(primitive);
@@ -54,6 +69,10 @@ impl<C: PixelColor> StyledPixelsIterator<C> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C> Iterator for StyledPixelsIterator<C>
 where
     C: PixelColor,
@@ -105,6 +124,12 @@ where
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Circle {
     type Iter = StyledPixelsIterator<C>;
 
@@ -183,6 +208,12 @@ impl StyledScanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(StyledScanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for StyledScanlines {
     type Item = StyledScanline;
 
@@ -206,6 +237,12 @@ impl Iterator for StyledScanlines {
 mod tests {
     use super::*;
     #[maybe_async_cfg::maybe(
+        idents(PixelIteratorExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::iterator::PixelIteratorExt;
+    #[maybe_async_cfg::maybe(
         idents(Drawable),
         sync(feature = "draw_target_sync"),
         async(feature = "draw_target_async")
@@ -213,7 +250,6 @@ mod tests {
     use crate::Drawable;
     use crate::{
         geometry::{Dimensions, Point},
-        iterator::PixelIteratorExt,
         mock_display::MockDisplay,
         pixelcolor::BinaryColor,
         primitives::{

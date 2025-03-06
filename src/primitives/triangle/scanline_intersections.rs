@@ -1,13 +1,27 @@
 //! Triangle scanline intersections iterator.
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ThickSegment),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::{Scanline, ThickSegment};
+#[maybe_async_cfg::maybe(
+    idents(Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::Triangle;
 use crate::{
     geometry::Point,
-    primitives::{
-        common::{LineJoin, PointType, Scanline, StrokeOffset, ThickSegment},
-        Triangle,
-    },
+    primitives::common::{LineJoin, PointType, StrokeOffset},
 };
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 struct LineConfig {
@@ -18,6 +32,11 @@ struct LineConfig {
 }
 
 /// Triangle scanline intersections iterator.
+#[maybe_async_cfg::maybe(
+    idents(LineConfig, Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct ScanlineIntersections {
@@ -29,6 +48,11 @@ pub struct ScanlineIntersections {
     is_collapsed: bool,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(LineConfig, Scanline, ThickSegment, Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl ScanlineIntersections {
     /// Create a new thick segments iterator.
     pub fn new(
@@ -190,6 +214,11 @@ impl ScanlineIntersections {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for ScanlineIntersections {
     type Item = (Scanline, PointType);
 

@@ -3,19 +3,25 @@
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
-use crate::draw_target::DrawTarget;
+use crate::draw_target::{DrawTarget, DrawTargetExt};
 #[maybe_async_cfg::maybe(
     idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
 use crate::primitives::styled::StyledDrawable;
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ScanlineIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::{common::Scanline, polyline::scanline_iterator::ScanlineIterator};
 use crate::{
     geometry::{Dimensions, Point, Size},
     pixelcolor::PixelColor,
     primitives::{
-        common::{Scanline, StrokeOffset, ThickSegmentIter},
-        polyline::{self, scanline_iterator::ScanlineIterator, Polyline},
+        common::{StrokeOffset, ThickSegmentIter},
+        polyline::{self, Polyline},
         styled::{StyledDimensions, StyledPixels},
         PointsIter, PrimitiveStyle, Rectangle,
     },
@@ -52,7 +58,7 @@ pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
 }
 
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
+    idents(DrawTarget, ScanlineIterator),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
@@ -76,6 +82,11 @@ where
     Ok(())
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ScanlineIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 enum StyledIter<'a> {
@@ -88,6 +99,11 @@ enum StyledIter<'a> {
 }
 
 /// Pixel iterator for each pixel in the line
+#[maybe_async_cfg::maybe(
+    idents(StyledIter),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct StyledPixelsIterator<'a, C> {
@@ -95,6 +111,11 @@ pub struct StyledPixelsIterator<'a, C> {
     line_iter: StyledIter<'a>,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(StyledIter, Scanline, ScanlineIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, C: PixelColor> StyledPixelsIterator<'a, C> {
     pub(in crate::primitives) fn new(primitive: &Polyline<'a>, style: &PrimitiveStyle<C>) -> Self {
         let line_iter = if style.stroke_width <= 1 {
@@ -119,6 +140,12 @@ impl<'a, C: PixelColor> StyledPixelsIterator<'a, C> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(StyledIter, StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> Iterator for StyledPixelsIterator<'_, C> {
     type Item = Pixel<C>;
 
@@ -150,6 +177,12 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<'_, C> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(StyledIter, StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Polyline<'a> {
     type Iter = StyledPixelsIterator<'a, C>;
 

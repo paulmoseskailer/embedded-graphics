@@ -13,8 +13,23 @@ pub use distance_iterator::DistanceIterator;
 pub use line_join::{JoinKind, LineJoin};
 pub use linear_equation::{LinearEquation, OriginLinearEquation, NORMAL_VECTOR_SCALE};
 pub use plane_sector::PlaneSector;
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use scanline::Scanline;
+#[maybe_async_cfg::maybe(
+    idents(StyledScanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use styled_scanline::StyledScanline;
+#[maybe_async_cfg::maybe(
+    idents(ThickSegment),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use thick_segment::ThickSegment;
 pub use thick_segment_iter::ThickSegmentIter;
 

@@ -15,7 +15,17 @@ mod styled;
 
 pub use corner_radii::{CornerRadii, CornerRadiiBuilder};
 use ellipse_quadrant::{EllipseQuadrant, Quadrant};
+#[maybe_async_cfg::maybe(
+    idents(Points),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use points::Points;
+#[maybe_async_cfg::maybe(
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use styled::StyledPixelsIterator;
 
 /// Rounded rectangle primitive.
@@ -270,6 +280,12 @@ impl OffsetOutline for RoundedRectangle {
 
 impl Primitive for RoundedRectangle {}
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(Points),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl PointsIter for RoundedRectangle {
     type Iter = Points;
 

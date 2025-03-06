@@ -1,9 +1,9 @@
 #[maybe_async_cfg::maybe(
-    idents(DrawTarget),
+    idents(DrawTarget, DrawTargetExt),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
-use crate::draw_target::DrawTarget;
+use crate::draw_target::{DrawTarget, DrawTargetExt};
 #[maybe_async_cfg::maybe(
     idents(StyledDrawable),
     sync(feature = "draw_target_sync"),

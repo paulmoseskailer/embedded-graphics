@@ -9,7 +9,17 @@ use crate::{
 mod points;
 mod styled;
 
+#[maybe_async_cfg::maybe(
+    idents(Points),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use points::Points;
+#[maybe_async_cfg::maybe(
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use styled::StyledPixelsIterator;
 
 /// Ellipse primitive
@@ -114,6 +124,12 @@ pub(in crate::primitives) fn center_2x(top_left: Point, size: Size) -> Point {
 
 impl Primitive for Ellipse {}
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(Points),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl PointsIter for Ellipse {
     type Iter = Points;
 

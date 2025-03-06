@@ -11,6 +11,10 @@ use crate::{
 use core::ops::Range;
 
 /// Scanline.
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Scanline {
@@ -18,6 +22,11 @@ pub struct Scanline {
     pub x: Range<i32>,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Scanline {
     /// Creates a new scanline.
     pub const fn new(y: i32, x: Range<i32>) -> Self {
@@ -142,11 +151,6 @@ impl Scanline {
     }
 
     /// Draws the scanline.
-    #[maybe_async_cfg::maybe(
-        idents(DrawTarget),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
-    )]
     pub async fn draw<T>(&self, target: &mut T, color: T::Color) -> Result<(), T::Error>
     where
         T: DrawTarget,
@@ -166,6 +170,11 @@ impl Scanline {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for Scanline {
     type Item = Point;
 
@@ -179,11 +188,11 @@ mod tests {
     use super::*;
 
     fn run_touches_test(s1: i32, e1: i32, s2: i32, e2: i32, expected: bool, ident: &str) {
-        let mut l1 = Scanline::new_empty(0);
+        let mut l1 = ScanlineSync::new_empty(0);
         l1.extend(s1);
         l1.extend(e1);
 
-        let mut l2 = Scanline::new_empty(0);
+        let mut l2 = ScanlineSync::new_empty(0);
         l2.extend(s2);
         l2.extend(e2);
 
@@ -208,14 +217,14 @@ mod tests {
 
     #[test]
     fn issue_489_filled_triangle_bug() {
-        let mut l1 = Scanline { y: 5, x: 18..20 };
-        let l2 = Scanline { y: 5, x: 11..26 };
+        let mut l1 = ScanlineSync { y: 5, x: 18..20 };
+        let l2 = ScanlineSync { y: 5, x: 11..26 };
 
         assert_eq!(l1.touches(&l2), true, "l1 touches l2");
 
         let result = l1.try_extend(&l2);
 
         assert_eq!(result, true);
-        assert_eq!(l1, Scanline { y: 5, x: 11..26 });
+        assert_eq!(l1, ScanlineSync { y: 5, x: 11..26 });
     }
 }

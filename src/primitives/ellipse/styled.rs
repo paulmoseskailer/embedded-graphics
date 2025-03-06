@@ -5,6 +5,12 @@
 )]
 use crate::draw_target::DrawTarget;
 #[maybe_async_cfg::maybe(
+    idents(Scanline, StyledScanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::{Scanline, StyledScanline};
+#[maybe_async_cfg::maybe(
     idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
@@ -14,7 +20,6 @@ use crate::{
     geometry::{Dimensions, Point},
     pixelcolor::PixelColor,
     primitives::{
-        common::{Scanline, StyledScanline},
         ellipse::{points::Scanlines, Ellipse, EllipseContains},
         styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle, Rectangle,
@@ -24,6 +29,11 @@ use crate::{
 use az::SaturatingAs;
 
 /// Pixel iterator for each pixel in the ellipse border
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct StyledPixelsIterator<C> {
@@ -37,6 +47,11 @@ pub struct StyledPixelsIterator<C> {
     fill_color: Option<C>,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline, StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledPixelsIterator<C> {
     pub(in crate::primitives) fn new(primitive: &Ellipse, style: &PrimitiveStyle<C>) -> Self {
         let stroke_area = style.stroke_area(primitive);
@@ -53,6 +68,12 @@ impl<C: PixelColor> StyledPixelsIterator<C> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
     type Item = Pixel<C>;
 
@@ -101,6 +122,12 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(StyledPixelsIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Ellipse {
     type Iter = StyledPixelsIterator<C>;
 
@@ -180,6 +207,12 @@ impl StyledScanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(StyledScanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for StyledScanlines {
     type Item = StyledScanline;
 

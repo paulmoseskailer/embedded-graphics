@@ -1,13 +1,23 @@
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::Scanline;
 use crate::{
     geometry::Point,
     primitives::{
-        common::Scanline,
         rounded_rectangle::{RoundedRectangle, RoundedRectangleContains},
         ContainsPoint,
     },
 };
 
 /// Iterator over all points inside the rounded rectangle.
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Points {
@@ -15,6 +25,11 @@ pub struct Points {
     current_scanline: Scanline,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Points {
     pub(in crate::primitives) fn new(rounded_rectangle: &RoundedRectangle) -> Self {
         Self {
@@ -24,6 +39,10 @@ impl Points {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for Points {
     type Item = Point;
 
@@ -49,6 +68,12 @@ impl Scanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for Scanlines {
     type Item = Scanline;
 
@@ -94,18 +119,18 @@ impl Iterator for Scanlines {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        geometry::Size,
-        mock_display::MockDisplay,
-        pixelcolor::BinaryColor,
-        primitives::{PointsIter, Primitive, PrimitiveStyle, Rectangle},
-    };
     #[maybe_async_cfg::maybe(
         idents(Drawable),
         sync(feature = "draw_target_sync"),
         async(feature = "draw_target_async")
     )]
     use crate::Drawable;
+    use crate::{
+        geometry::Size,
+        mock_display::MockDisplay,
+        pixelcolor::BinaryColor,
+        primitives::{PointsIter, Primitive, PrimitiveStyle, Rectangle},
+    };
 
     #[test]
     fn points_equals_filled() {

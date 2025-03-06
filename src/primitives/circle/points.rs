@@ -1,11 +1,22 @@
 use core::ops::Range;
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::Scanline;
 use crate::{
     geometry::{Dimensions, Point, PointExt},
-    primitives::{circle::Circle, common::Scanline},
+    primitives::circle::Circle,
 };
 
 /// Iterator over all points inside the circle.
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Points {
@@ -13,6 +24,11 @@ pub struct Points {
     current_scanline: Scanline,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Points {
     pub(in crate::primitives) fn new(circle: &Circle) -> Self {
         Self {
@@ -22,6 +38,10 @@ impl Points {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for Points {
     type Item = Point;
 
@@ -55,6 +75,12 @@ impl Scanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for Scanlines {
     type Item = Scanline;
 

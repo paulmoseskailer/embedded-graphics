@@ -2,20 +2,31 @@
 
 use core::ops::Range;
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::common::Scanline;
+#[maybe_async_cfg::maybe(
+    idents(ScanlineIntersections),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::polyline::scanline_intersections::ScanlineIntersections;
 use crate::{
     pixelcolor::PixelColor,
-    primitives::{
-        common::Scanline,
-        polyline::{
-            scanline_intersections::ScanlineIntersections, styled::untranslated_bounding_box,
-        },
-        Polyline, PrimitiveStyle,
-    },
+    primitives::{polyline::styled::untranslated_bounding_box, Polyline, PrimitiveStyle},
 };
 
 /// Iterate over every scanline in the polyline's bounding box.
 ///
 /// Each scanline produces multiple actual `Line`s for each intersection of the thick polyline.
+#[maybe_async_cfg::maybe(
+    idents(ScanlineIntersections),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct ScanlineIterator<'a> {
@@ -24,6 +35,11 @@ pub struct ScanlineIterator<'a> {
     intersections: ScanlineIntersections<'a>,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(ScanlineIntersections),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a> ScanlineIterator<'a> {
     /// New.
     pub fn new<C: PixelColor>(primitive: &Polyline<'a>, style: &PrimitiveStyle<C>) -> Self {
@@ -57,6 +73,11 @@ impl<'a> ScanlineIterator<'a> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a> Iterator for ScanlineIterator<'a> {
     type Item = Scanline;
 

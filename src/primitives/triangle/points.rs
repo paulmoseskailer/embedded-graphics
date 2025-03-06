@@ -1,12 +1,26 @@
+#[maybe_async_cfg::maybe(
+    idents(Scanline, Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::primitives::{common::Scanline, triangle::Triangle};
+
+#[maybe_async_cfg::maybe(
+    idents(ScanlineIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 use crate::{
     geometry::{Dimensions, Point},
-    primitives::{
-        common::{Scanline, StrokeOffset},
-        triangle::{scanline_iterator::ScanlineIterator, Triangle},
-    },
+    primitives::{common::StrokeOffset, triangle::scanline_iterator::ScanlineIterator},
 };
 
 /// Iterator over all points inside the triangle.
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ScanlineIterator),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Points {
@@ -14,6 +28,11 @@ pub struct Points {
     current_line: Scanline,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanline, ScanlineIterator, Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Points {
     pub(in crate::primitives) fn new(triangle: &Triangle) -> Self {
         let scanline_iter = ScanlineIterator::new(
@@ -33,6 +52,10 @@ impl Points {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Iterator for Points {
     type Item = Point;
 
@@ -45,10 +68,16 @@ impl Iterator for Points {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Triangle),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::Triangle;
     use crate::{
+        geometry::Point,
         pixelcolor::BinaryColor,
         primitives::{PointsIter, Primitive, PrimitiveStyle},
         transform::Transform,
