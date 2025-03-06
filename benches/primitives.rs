@@ -1,5 +1,11 @@
 use criterion::*;
 use embedded_graphics::{geometry::AnchorPoint, pixelcolor::Gray8, prelude::*, primitives::*};
+#[maybe_async_cfg::maybe(
+    idents(Triangle, Drawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::{primitives::triangle::Triangle, Drawable};
 
 mod common;
 
@@ -7,16 +13,31 @@ use common::Framebuffer;
 
 const BOUNDING_BOX: Rectangle = Rectangle::new(Point::new_equal(32), Size::new_equal(192));
 
+#[maybe_async_cfg::maybe(
+    idents(closed_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn rectangle(c: &mut Criterion) {
     closed_shape_benches(c, "rectangle", || BOUNDING_BOX);
 }
 
+#[maybe_async_cfg::maybe(
+    idents(closed_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn rounded_rectangle(c: &mut Criterion) {
     closed_shape_benches(c, "rounded rectangle", || {
         RoundedRectangle::new(BOUNDING_BOX, CornerRadii::new(Size::new(10, 12)))
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(closed_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn rounded_rectangle_corners(c: &mut Criterion) {
     closed_shape_benches(c, "rounded rectangle corners", || {
         RoundedRectangle::new(
@@ -31,6 +52,11 @@ fn rounded_rectangle_corners(c: &mut Criterion) {
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Triangle, closed_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn triangle(c: &mut Criterion) {
     closed_shape_benches(c, "triangle", || {
         Triangle::new(
@@ -41,18 +67,33 @@ fn triangle(c: &mut Criterion) {
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(closed_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn circle(c: &mut Criterion) {
     closed_shape_benches(c, "circle", || {
         Circle::new(BOUNDING_BOX.top_left, BOUNDING_BOX.size.width)
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(closed_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn ellipse(c: &mut Criterion) {
     closed_shape_benches(c, "ellipse", || {
         Ellipse::with_center(BOUNDING_BOX.center(), BOUNDING_BOX.size - Size::new(0, 20))
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(closed_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn sector_150(c: &mut Criterion) {
     closed_shape_benches(c, "sector 150°", || {
         Sector::with_center(
@@ -64,6 +105,11 @@ fn sector_150(c: &mut Criterion) {
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(closed_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn sector_360(c: &mut Criterion) {
     closed_shape_benches(c, "sector 360°", || {
         Sector::with_center(
@@ -75,6 +121,11 @@ fn sector_360(c: &mut Criterion) {
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(open_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn line(c: &mut Criterion) {
     open_shape_benches(c, "line", || {
         Line::new(
@@ -85,6 +136,11 @@ fn line(c: &mut Criterion) {
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(open_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn polyline(c: &mut Criterion) {
     let points = [
         BOUNDING_BOX.anchor_point(AnchorPoint::BottomLeft),
@@ -97,6 +153,11 @@ fn polyline(c: &mut Criterion) {
     open_shape_benches(c, "polyline", || Polyline::new(&points));
 }
 
+#[maybe_async_cfg::maybe(
+    idents(open_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn arc_150(c: &mut Criterion) {
     open_shape_benches(c, "arc 150°", || {
         Arc::with_center(
@@ -108,6 +169,11 @@ fn arc_150(c: &mut Criterion) {
     });
 }
 
+#[maybe_async_cfg::maybe(
+    idents(open_shape_benches(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn arc_360(c: &mut Criterion) {
     open_shape_benches(c, "arc 360°", || {
         Arc::with_center(
@@ -119,23 +185,45 @@ fn arc_360(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "draw_target_sync")]
 criterion_group!(
     primitives,
-    rectangle,
-    rounded_rectangle,
-    rounded_rectangle_corners,
-    triangle,
-    circle,
-    ellipse,
-    line,
-    polyline,
-    sector_150,
-    sector_360,
-    arc_150,
-    arc_360,
+    rectangle_sync,
+    rounded_rectangle_sync,
+    rounded_rectangle_corners_sync,
+    triangle_sync,
+    circle_sync,
+    ellipse_sync,
+    line_sync,
+    polyline_sync,
+    sector_150_sync,
+    sector_360_sync,
+    arc_150_sync,
+    arc_360_sync,
+);
+#[cfg(feature = "draw_target_async")]
+criterion_group!(
+    primitives,
+    rectangle_async,
+    rounded_rectangle_async,
+    rounded_rectangle_corners_async,
+    triangle_async,
+    circle_async,
+    ellipse_async,
+    line_async,
+    polyline_async,
+    sector_150_async,
+    sector_360_async,
+    arc_150_async,
+    arc_360_async,
 );
 criterion_main!(primitives);
 
+#[maybe_async_cfg::maybe(
+    idents(Drawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn closed_shape_benches<P>(c: &mut Criterion, name: &str, build: impl Fn() -> P)
 where
     P: Primitive,
@@ -204,6 +292,11 @@ where
     group.finish()
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Drawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn open_shape_benches<P>(c: &mut Criterion, name: &str, build: impl Fn() -> P)
 where
     P: Primitive,

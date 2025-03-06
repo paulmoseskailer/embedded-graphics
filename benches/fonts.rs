@@ -1,4 +1,10 @@
 use criterion::*;
+#[maybe_async_cfg::maybe(
+    idents(Drawable),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::Drawable;
 use embedded_graphics::{
     geometry::Point,
     mono_font::{

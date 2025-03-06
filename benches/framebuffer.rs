@@ -1,10 +1,16 @@
 use criterion::*;
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::draw_target::DrawTarget;
 use embedded_graphics::{
     framebuffer::{buffer_size, Framebuffer},
     geometry::Point,
     image::GetPixel,
     pixelcolor::{raw::LittleEndianMsb0, BinaryColor, Rgb565},
-    prelude::{DrawTarget, Size, WebColors},
+    prelude::{Size, WebColors},
     primitives::{Primitive, PrimitiveStyle, Rectangle},
 };
 

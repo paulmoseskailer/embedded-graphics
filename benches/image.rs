@@ -1,14 +1,21 @@
 use criterion::*;
-use embedded_graphics::{
-    image::{Image, ImageRaw},
-    pixelcolor::BinaryColor,
-    prelude::*,
-};
+#[maybe_async_cfg::maybe(
+    idents(Drawable, Image),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::{image::Image, Drawable};
+use embedded_graphics::{image::ImageRaw, pixelcolor::BinaryColor, prelude::*};
 
 mod common;
 
 use common::Framebuffer;
 
+#[maybe_async_cfg::maybe(
+    idents(Image),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn image_1bpp(c: &mut Criterion) {
     c.bench_function("image 4x4px", |b| {
         let bytes = include_bytes!("../assets/patch_1bpp.raw");
@@ -21,5 +28,8 @@ fn image_1bpp(c: &mut Criterion) {
     });
 }
 
-criterion_group!(images, image_1bpp);
+#[cfg(feature = "draw_target_sync")]
+criterion_group!(images, image_1bpp_sync);
+#[cfg(feature = "draw_target_async")]
+criterion_group!(images, image_1bpp_async);
 criterion_main!(images);

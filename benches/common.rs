@@ -1,3 +1,9 @@
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::draw_target::DrawTarget;
 use embedded_graphics::prelude::*;
 use std::convert::TryFrom;
 
@@ -41,6 +47,12 @@ where
     }
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<C> DrawTarget for Framebuffer<C>
 where
     C: PixelColor + Default,
