@@ -1,7 +1,10 @@
 #[maybe_async_cfg::maybe(
-    idents(Scanline, Triangle),
+    idents(Scanline),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 use crate::primitives::{common::Scanline, triangle::Triangle};
 
@@ -29,9 +32,12 @@ pub struct Points {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Scanline, ScanlineIterator, Triangle),
+    idents(Scanline, ScanlineIterator),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl Points {
     pub(in crate::primitives) fn new(triangle: &Triangle) -> Self {
@@ -69,9 +75,11 @@ impl Iterator for Points {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Triangle),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 #[cfg(test)]
 mod tests {

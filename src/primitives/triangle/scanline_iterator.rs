@@ -1,9 +1,9 @@
 //! Scanline iterator.
 
 #[maybe_async_cfg::maybe(
-    idents(Scanline, ScanlineIntersections, Triangle),
+    idents(Scanline, ScanlineIntersections),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Triangle(async = "Triangle")))
 )]
 use crate::primitives::{
     common::{PointType, Scanline, StrokeOffset},
@@ -27,9 +27,12 @@ pub(in crate::primitives::triangle) struct ScanlineIterator {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Scanline, ScanlineIntersections, Triangle),
+    idents(Scanline, ScanlineIntersections),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl ScanlineIterator {
     /// New.

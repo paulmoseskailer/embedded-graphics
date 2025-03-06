@@ -7,9 +7,11 @@
 )]
 use crate::primitives::common::{Scanline, ThickSegment};
 #[maybe_async_cfg::maybe(
-    idents(Triangle),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 use crate::primitives::Triangle;
 use crate::{
@@ -33,9 +35,12 @@ struct LineConfig {
 
 /// Triangle scanline intersections iterator.
 #[maybe_async_cfg::maybe(
-    idents(LineConfig, Triangle),
+    idents(LineConfig),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
@@ -49,9 +54,12 @@ pub struct ScanlineIntersections {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(LineConfig, Scanline, ThickSegment, Triangle),
+    idents(LineConfig, Scanline, ThickSegment),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl ScanlineIntersections {
     /// Create a new thick segments iterator.

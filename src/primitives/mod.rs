@@ -16,9 +16,11 @@ pub mod triangle;
 #[doc(no_inline)]
 pub use self::rectangle::Rectangle;
 #[maybe_async_cfg::maybe(
-    idents(Triangle),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 use self::triangle::Triangle;
 pub use self::{

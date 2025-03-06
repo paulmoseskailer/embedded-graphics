@@ -81,8 +81,11 @@ pub use styled::StyledPixelsIterator;
 ///
 /// [`from_slice`]: Triangle::from_slice()
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
@@ -92,15 +95,21 @@ pub struct Triangle {
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl Primitive for Triangle {}
 
 #[maybe_async_cfg::maybe(
     idents(Points),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl PointsIter for Triangle {
     type Iter = Points;
@@ -111,8 +120,11 @@ impl PointsIter for Triangle {
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl ContainsPoint for Triangle {
     fn contains(&self, point: Point) -> bool {
@@ -172,8 +184,11 @@ impl ContainsPoint for Triangle {
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl Dimensions for Triangle {
     fn bounding_box(&self) -> Rectangle {
@@ -191,8 +206,11 @@ impl Dimensions for Triangle {
 
 #[maybe_async_cfg::maybe(
     idents(Scanline),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl Triangle {
     /// Create a new triangle with the given vertices.
@@ -324,8 +342,11 @@ impl Triangle {
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 impl Transform for Triangle {
     /// Translate the triangle from its current position to a new position by (x, y) pixels,
@@ -379,9 +400,11 @@ const fn sort_two_yx(p1: Point, p2: Point) -> (Point, Point) {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Triangle),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 #[cfg(test)]
 mod tests {

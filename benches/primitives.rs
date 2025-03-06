@@ -1,9 +1,12 @@
 use criterion::*;
 use embedded_graphics::{geometry::AnchorPoint, pixelcolor::Gray8, prelude::*, primitives::*};
 #[maybe_async_cfg::maybe(
-    idents(Triangle, Drawable),
+    idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 use embedded_graphics::{primitives::triangle::Triangle, Drawable};
 
@@ -53,9 +56,12 @@ fn rounded_rectangle_corners(c: &mut Criterion) {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Triangle, closed_shape_benches(fn)),
+    idents(closed_shape_benches(fn)),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 fn triangle(c: &mut Criterion) {
     closed_shape_benches(c, "triangle", || {

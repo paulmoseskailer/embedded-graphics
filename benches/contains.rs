@@ -1,16 +1,20 @@
 use criterion::*;
 use embedded_graphics::prelude::*;
 #[maybe_async_cfg::maybe(
-    idents(Triangle),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 use embedded_graphics::primitives::triangle::Triangle;
 
 #[maybe_async_cfg::maybe(
-    idents(Triangle),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 fn triangle_contains_inside(c: &mut Criterion) {
     c.bench_function("triangle contains point (inside)", |b| {
@@ -24,9 +28,11 @@ fn triangle_contains_inside(c: &mut Criterion) {
 // Point outside triangle but still within bounding box. If point is outside bounding box, this
 // benchmark doesn't exercise the expensive point-in-triangle code.
 #[maybe_async_cfg::maybe(
-    idents(Triangle),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 fn triangle_contains_outside(c: &mut Criterion) {
     c.bench_function("triangle contains point (outside)", |b| {
