@@ -225,16 +225,16 @@ impl Transform for Line {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        geometry::Size, mock_display::MockDisplay, pixelcolor::BinaryColor,
-        primitives::PrimitiveStyle, Pixel,
-    };
     #[maybe_async_cfg::maybe(
         idents(Drawable),
         sync(feature = "draw_target_sync"),
         async(feature = "draw_target_async")
     )]
     use crate::Drawable;
+    use crate::{
+        geometry::Size, mock_display::MockDisplay, pixelcolor::BinaryColor,
+        primitives::PrimitiveStyle, Pixel,
+    };
     use arrayvec::ArrayVec;
 
     #[test]

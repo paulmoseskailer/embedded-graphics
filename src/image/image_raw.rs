@@ -379,6 +379,12 @@ mod tests {
     )]
     use crate::image::Image;
     #[maybe_async_cfg::maybe(
+        idents(PixelIteratorExt),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::iterator::PixelIteratorExt;
+    #[maybe_async_cfg::maybe(
         idents(Drawable),
         sync(feature = "draw_target_sync"),
         async(feature = "draw_target_async")
@@ -390,12 +396,6 @@ mod tests {
         pixelcolor::{raw::RawU32, *},
         Pixel,
     };
-    #[maybe_async_cfg::maybe(
-        idents(PixelIteratorExt),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
-    )]
-    use crate::iterator::PixelIteratorExt;
 
     #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
     struct TestColorU32(RawU32);

@@ -2,6 +2,12 @@
 
 use core::{convert::Infallible, marker::PhantomData};
 
+#[maybe_async_cfg::maybe(
+    idents(DrawTarget),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use crate::draw_target::DrawTarget;
 use crate::{
     geometry::{OriginDimensions, Point, Size},
     image::{GetPixel, ImageRaw},
@@ -15,12 +21,6 @@ use crate::{
     },
     Pixel,
 };
-#[maybe_async_cfg::maybe(
-    idents(DrawTarget),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
-use crate::draw_target::DrawTarget;
 
 /// Calculates the required buffer size.
 ///
@@ -175,8 +175,8 @@ macro_rules! impl_bit {
         #[maybe_async_cfg::maybe(
             keep_self,
             idents(DrawTarget),
-            sync(feature="draw_target_sync"),
-            async(feature="draw_target_async"),
+            sync(feature = "draw_target_sync"),
+            async(feature = "draw_target_async")
         )]
         impl<C, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
             for Framebuffer<C, $raw_type, BO, WIDTH, HEIGHT, N>
@@ -227,8 +227,8 @@ where
 #[maybe_async_cfg::maybe(
     keep_self,
     idents(DrawTarget),
-    sync(feature="draw_target_sync"),
-    async(feature="draw_target_async"),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
 )]
 impl<C, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
     for Framebuffer<C, RawU8, BO, WIDTH, HEIGHT, N>
@@ -280,8 +280,8 @@ macro_rules! impl_bytes {
         #[maybe_async_cfg::maybe(
             keep_self,
             idents(DrawTarget),
-            sync(feature="draw_target_sync"),
-            async(feature="draw_target_async"),
+            sync(feature = "draw_target_sync"),
+            async(feature = "draw_target_async")
         )]
         impl<C, const WIDTH: usize, const HEIGHT: usize, const N: usize> DrawTarget
             for Framebuffer<C, $raw_type, $bo_type, WIDTH, HEIGHT, N>
@@ -328,13 +328,6 @@ mod tests {
 
     use super::*;
 
-    use crate::{
-        geometry::Dimensions,
-        geometry::Point,
-        mock_display::MockDisplay,
-        pixelcolor::{BinaryColor, Gray2, Gray4, Gray8, Rgb565, Rgb888, RgbColor},
-        primitives::{Primitive, PrimitiveStyle},
-    };
     #[maybe_async_cfg::maybe(
         idents(Image),
         sync(feature = "draw_target_sync"),
@@ -347,6 +340,13 @@ mod tests {
         async(feature = "draw_target_async")
     )]
     use crate::Drawable;
+    use crate::{
+        geometry::Dimensions,
+        geometry::Point,
+        mock_display::MockDisplay,
+        pixelcolor::{BinaryColor, Gray2, Gray4, Gray8, Rgb565, Rgb888, RgbColor},
+        primitives::{Primitive, PrimitiveStyle},
+    };
 
     /// Calculate the framebuffer generic constants.
     macro_rules! framebuffer {

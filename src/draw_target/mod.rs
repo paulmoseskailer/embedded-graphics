@@ -287,6 +287,12 @@ mod tests {
         async(feature = "draw_target_async")
     )]
     use crate::draw_target::{DrawTarget, DrawTargetExt};
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
         geometry::{Dimensions, Point, Size},
         mock_display::MockDisplay,
@@ -294,12 +300,6 @@ mod tests {
         primitives::{Primitive, PrimitiveStyle, Rectangle},
         Pixel,
     };
-    #[maybe_async_cfg::maybe(
-        idents(Drawable),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
-    )]
-    use crate::Drawable;
 
     #[test]
     fn draw_iter() {

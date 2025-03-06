@@ -235,6 +235,12 @@ pub(crate) mod tests {
         async(feature = "draw_target_async")
     )]
     use crate::image::Image;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
         framebuffer::{buffer_size, Framebuffer},
         geometry::{Dimensions, Point},
@@ -247,12 +253,6 @@ pub(crate) mod tests {
         },
         text::{Baseline, Text},
     };
-    #[maybe_async_cfg::maybe(
-        idents(Drawable),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
-    )]
-    use crate::Drawable;
 
     /// Draws a text using the given font and checks it against the expected pattern.
     #[track_caller]

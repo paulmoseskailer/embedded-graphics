@@ -109,18 +109,18 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Line {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        geometry::{Dimensions, Point},
-        mock_display::MockDisplay,
-        pixelcolor::{Rgb888, RgbColor},
-        primitives::{Primitive, PrimitiveStyleBuilder},
-    };
     #[maybe_async_cfg::maybe(
         idents(Drawable),
         sync(feature = "draw_target_sync"),
         async(feature = "draw_target_async")
     )]
     use crate::Drawable;
+    use crate::{
+        geometry::{Dimensions, Point},
+        mock_display::MockDisplay,
+        pixelcolor::{Rgb888, RgbColor},
+        primitives::{Primitive, PrimitiveStyleBuilder},
+    };
 
     #[test]
     fn bounding_box() {

@@ -148,7 +148,7 @@ pub struct Image<'a, T> {
 }
 
 #[maybe_async_cfg::maybe(
-idents(ImageDrawable),
+    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]

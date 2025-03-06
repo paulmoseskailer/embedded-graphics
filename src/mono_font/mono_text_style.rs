@@ -575,6 +575,12 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[maybe_async_cfg::maybe(
+        idents(Drawable),
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async")
+    )]
+    use crate::Drawable;
     use crate::{
         geometry::Dimensions,
         image::ImageRaw,
@@ -589,12 +595,6 @@ mod tests {
         pixelcolor::{BinaryColor, Rgb888, RgbColor},
         text::Text,
     };
-    #[maybe_async_cfg::maybe(
-        idents(Drawable),
-        sync(feature = "draw_target_sync"),
-        async(feature = "draw_target_async")
-    )]
-    use crate::Drawable;
 
     const SPACED_FONT: MonoFont = MonoFont {
         character_spacing: 5,

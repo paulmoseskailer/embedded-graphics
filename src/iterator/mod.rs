@@ -77,16 +77,13 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        geometry::Point, mock_display::MockDisplay,
-        pixelcolor::BinaryColor, Pixel,
-    };
     #[maybe_async_cfg::maybe(
         idents(PixelIteratorExt),
         sync(feature = "draw_target_sync"),
         async(feature = "draw_target_async")
     )]
     use crate::iterator::PixelIteratorExt;
+    use crate::{geometry::Point, mock_display::MockDisplay, pixelcolor::BinaryColor, Pixel};
 
     #[test]
     fn draw_pixel_iterator() {

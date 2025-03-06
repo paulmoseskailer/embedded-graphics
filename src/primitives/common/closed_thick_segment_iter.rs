@@ -1,15 +1,15 @@
 //! Closed shape thick segment iterator.
 
-use crate::{
-    geometry::Point,
-    primitives::common::{LineJoin, StrokeOffset},
-};
 #[maybe_async_cfg::maybe(
     idents(ThickSegment),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
 use crate::primitives::common::ThickSegment;
+use crate::{
+    geometry::Point,
+    primitives::common::{LineJoin, StrokeOffset},
+};
 
 /// Closed shape thick segments iterator.
 ///
