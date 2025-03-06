@@ -19,12 +19,14 @@ pub use crate::{
 #[maybe_async_cfg::maybe(
     idents(DrawTargetExt),
     idents(PixelIteratorExt),
-    idents(ImageDrawable),
     idents(Drawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            DrawTarget(async = "DrawTargetAsync"),
+            ImageDrawable(async = "ImageDrawableAsync")
+        )
     )
 )]
 pub use crate::{

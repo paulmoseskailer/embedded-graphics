@@ -100,9 +100,11 @@ mod image_raw;
 mod sub_image;
 
 #[maybe_async_cfg::maybe(
-    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(ImageDrawable(async = "ImageDrawableAsync"))
+    )
 )]
 pub use embedded_graphics_core::image::{GetPixel, ImageDrawable};
 pub use image_drawable_ext::ImageDrawableExt;
@@ -151,9 +153,11 @@ pub struct Image<'a, T> {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(ImageDrawable(async = "ImageDrawableAsync"))
+    )
 )]
 impl<'a, T> Image<'a, T>
 where
@@ -249,11 +253,14 @@ impl<T> Transform for Image<'_, T> {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Drawable, ImageDrawable),
+    idents(Drawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            ImageDrawable(async = "ImageDrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 impl<'a, T> Drawable for Image<'a, T>

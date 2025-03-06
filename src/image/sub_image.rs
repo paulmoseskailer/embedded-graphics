@@ -1,9 +1,11 @@
 #[maybe_async_cfg::maybe(
-    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            DrawTarget(async = "DrawTargetAsync"),
+            ImageDrawable(async = "ImageDrawableAsync")
+        )
     )
 )]
 use crate::{draw_target::DrawTarget, image::ImageDrawable};
@@ -32,9 +34,11 @@ pub struct SubImage<'a, T> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(ImageDrawable(async = "ImageDrawableAsync"))
+    )
 )]
 impl<'a, T> SubImage<'a, T>
 where
@@ -59,11 +63,13 @@ impl<T> OriginDimensions for SubImage<'_, T> {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            DrawTarget(async = "DrawTargetAsync"),
+            ImageDrawable(async = "ImageDrawableAsync")
+        )
     )
 )]
 impl<'a, T> ImageDrawable for SubImage<'a, T>
@@ -105,11 +111,13 @@ mod tests {
 
     #[maybe_async_cfg::maybe(
         keep_self,
-        idents(ImageDrawable),
         sync(feature = "draw_target_sync"),
         async(
             feature = "draw_target_async",
-            idents(DrawTarget(async = "DrawTargetAsync"))
+            idents(
+                DrawTarget(async = "DrawTargetAsync"),
+                ImageDrawable(async = "ImageDrawableAsync")
+            )
         )
     )]
     impl ImageDrawable for MockImageDrawable {

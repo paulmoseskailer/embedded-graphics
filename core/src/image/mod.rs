@@ -30,10 +30,16 @@ use crate::{
 /// [`Image`]: https://docs.rs/embedded-graphics/latest/embedded_graphics/image/struct.Image.html
 /// [`OriginDimensions`]: crate::geometry::OriginDimensions
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
+    sync(
+        feature = "draw_target_sync",
+        idents(ImageDrawable(sync = "ImageDrawable"))
+    ),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            ImageDrawable(async = "ImageDrawableAsync"),
+            DrawTarget(async = "DrawTargetAsync")
+        )
     )
 )]
 pub trait ImageDrawable: OriginDimensions {

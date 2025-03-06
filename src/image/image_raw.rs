@@ -9,9 +9,11 @@ use core::marker::PhantomData;
 )]
 use crate::draw_target::DrawTarget;
 #[maybe_async_cfg::maybe(
-    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(ImageDrawable(async = "ImageDrawableAsync"))
+    )
 )]
 use crate::image::ImageDrawable;
 use crate::{
@@ -213,11 +215,13 @@ const fn bytes_per_row(width: u32, bits_per_pixel: usize) -> usize {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(ImageDrawable),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            DrawTarget(async = "DrawTargetAsync"),
+            ImageDrawable(async = "ImageDrawableAsync")
+        )
     )
 )]
 impl<'a, C, O> ImageDrawable for ImageRaw<'a, C, O>

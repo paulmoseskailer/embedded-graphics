@@ -13,8 +13,11 @@ pub use crate::{
     primitives::PointsIter,
 };
 #[maybe_async_cfg::maybe(
-    idents(Drawable, ImageDrawable),
+    idents(Drawable),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(ImageDrawable(async = "ImageDrawableAsync"))
+    )
 )]
 pub use crate::{drawable::Drawable, image::ImageDrawable};
