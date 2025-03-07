@@ -15,17 +15,16 @@ use crate::primitives::styled::StyledDrawable;
 #[maybe_async_cfg::maybe(
     idents(Scanline, StyledScanline, Scanlines),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
 )]
 use crate::primitives::{
-    circle::points::Scanlines,
+    circle::{points::Scanlines, Circle},
     common::{Scanline, StyledScanline},
 };
 use crate::{
     geometry::{Dimensions, Point, PointExt},
     pixelcolor::PixelColor,
     primitives::{
-        circle::Circle,
         rectangle::Rectangle,
         styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle,
@@ -131,10 +130,9 @@ where
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(StyledPixelsIterator),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
 )]
 impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Circle {
     type Iter = StyledPixelsIterator<C>;
@@ -145,12 +143,11 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Circle {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(StyledDrawable, Scanlines, StyledScanlines),
-    sync(feature = "draw_target_sync"),
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(DrawTarget(async = "DrawTargetAsync"), Circle(async = "CircleAsync"))
     )
 )]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Circle {
@@ -194,6 +191,10 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Circle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Circle {
     fn styled_bounding_box(&self, style: &PrimitiveStyle<C>) -> Rectangle {
         let offset = style.outside_stroke_width().saturating_as();
@@ -215,8 +216,8 @@ struct StyledScanlines {
 
 #[maybe_async_cfg::maybe(
     idents(Scanlines),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
 )]
 impl StyledScanlines {
     pub fn new(stroke_area: &Circle, fill_area: &Circle) -> Self {
@@ -251,6 +252,10 @@ impl Iterator for StyledScanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

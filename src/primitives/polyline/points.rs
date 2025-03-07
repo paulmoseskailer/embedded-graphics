@@ -64,6 +64,13 @@ impl<'a> Iterator for Points<'a> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

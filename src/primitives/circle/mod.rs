@@ -64,6 +64,10 @@ pub use styled::StyledPixelsIterator;
 ///     .draw(&mut display)?;
 /// # Ok::<(), core::convert::Infallible>(())
 /// ```
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Circle {
@@ -74,6 +78,10 @@ pub struct Circle {
     pub diameter: u32,
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 impl Circle {
     /// Create a new circle delimited with a top-left point with a specific diameter
     pub const fn new(top_left: Point, diameter: u32) -> Self {
@@ -114,6 +122,10 @@ impl Circle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 impl OffsetOutline for Circle {
     fn offset(&self, offset: i32) -> Self {
         let diameter = if offset >= 0 {
@@ -126,13 +138,16 @@ impl OffsetOutline for Circle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 impl Primitive for Circle {}
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(Points),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
 )]
 impl PointsIter for Circle {
     type Iter = Points;
@@ -142,6 +157,10 @@ impl PointsIter for Circle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 impl ContainsPoint for Circle {
     fn contains(&self, point: Point) -> bool {
         let delta = self.center_2x() - point * 2;
@@ -151,12 +170,20 @@ impl ContainsPoint for Circle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 impl Dimensions for Circle {
     fn bounding_box(&self) -> Rectangle {
         Rectangle::new(self.top_left, Size::new_equal(self.diameter))
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 impl Transform for Circle {
     /// Translate the circle from its current position to a new position by (x, y) pixels,
     /// returning a new `Circle`. For a mutating transform, see `translate_mut`.
@@ -201,6 +228,10 @@ pub(in crate::primitives) const fn diameter_to_threshold(diameter: u32) -> u32 {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

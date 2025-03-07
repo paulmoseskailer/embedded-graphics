@@ -58,6 +58,13 @@ pub use styled::StyledPixelsIterator;
 ///     .draw(&mut display)?;
 /// # Ok::<(), core::convert::Infallible>(())
 /// ```
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Polyline<'a> {
@@ -68,6 +75,13 @@ pub struct Polyline<'a> {
     pub vertices: &'a [Point],
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 impl<'a> Polyline<'a> {
     /// Create a new polyline from a list of vertices
     ///
@@ -80,8 +94,22 @@ impl<'a> Polyline<'a> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 impl<'a> Primitive for Polyline<'a> {}
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 impl<'a> PointsIter for Polyline<'a> {
     type Iter = Points<'a>;
 
@@ -90,6 +118,13 @@ impl<'a> PointsIter for Polyline<'a> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 impl<'a> Dimensions for Polyline<'a> {
     fn bounding_box(&self) -> Rectangle {
         match self.vertices {
@@ -116,6 +151,13 @@ impl<'a> Dimensions for Polyline<'a> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 impl<'a> Transform for Polyline<'a> {
     /// Translate the polyline from its current position to a new position by (x, y) pixels, returning
     /// a new `Polyline`. For a mutating transform, see `translate_mut`.
@@ -168,6 +210,13 @@ impl<'a> Transform for Polyline<'a> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

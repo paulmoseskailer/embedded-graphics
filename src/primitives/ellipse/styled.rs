@@ -15,14 +15,17 @@ use crate::primitives::common::{Scanline, StyledScanline};
 #[maybe_async_cfg::maybe(
     idents(StyledDrawable, Scanlines),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
 )]
-use crate::primitives::{ellipse::points::Scanlines, styled::StyledDrawable};
+use crate::primitives::{
+    ellipse::{points::Scanlines, Ellipse},
+    styled::StyledDrawable,
+};
 use crate::{
     geometry::{Dimensions, Point},
     pixelcolor::PixelColor,
     primitives::{
-        ellipse::{Ellipse, EllipseContains},
+        ellipse::EllipseContains,
         styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle, Rectangle,
     },
@@ -51,8 +54,8 @@ pub struct StyledPixelsIterator<C> {
 
 #[maybe_async_cfg::maybe(
     idents(Scanline, StyledScanlines, StyledPixelsIterator),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
 )]
 impl<C: PixelColor> StyledPixelsIterator<C> {
     pub(in crate::primitives) fn new(primitive: &Ellipse, style: &PrimitiveStyle<C>) -> Self {
@@ -125,10 +128,9 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(StyledPixelsIterator),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
 )]
 impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Ellipse {
     type Iter = StyledPixelsIterator<C>;
@@ -139,12 +141,11 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Ellipse {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(StyledDrawable, Scanlines, StyledScanlines),
-    sync(feature = "draw_target_sync"),
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(DrawTarget(async = "DrawTargetAsync"), Ellipse(async = "EllipseAsync"))
     )
 )]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Ellipse {
@@ -188,6 +189,10 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Ellipse {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Ellipse {
     fn styled_bounding_box(&self, style: &PrimitiveStyle<C>) -> Rectangle {
         let offset = style.outside_stroke_width().saturating_as();
@@ -210,8 +215,8 @@ struct StyledScanlines {
 
 #[maybe_async_cfg::maybe(
     idents(Scanlines),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
 )]
 impl StyledScanlines {
     pub fn new(stroke_area: &Ellipse, fill_area: &Ellipse) -> Self {
@@ -248,6 +253,10 @@ impl Iterator for StyledScanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

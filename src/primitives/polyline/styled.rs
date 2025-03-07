@@ -1,5 +1,3 @@
-use maybe_async_cfg::maybe;
-
 #[maybe_async_cfg::maybe(
     idents(DrawTargetExt),
     sync(feature = "draw_target_sync"),
@@ -17,19 +15,22 @@ use crate::draw_target::{DrawTarget, DrawTargetExt};
 use crate::primitives::styled::StyledDrawable;
 #[maybe_async_cfg::maybe(
     idents(Scanline, ScanlineIterator, ThickSegmentIter),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(sync = "PolylineAsync"))
+    )
 )]
 use crate::primitives::{
     common::{Scanline, ThickSegmentIter},
-    polyline::scanline_iterator::ScanlineIterator,
+    polyline::{scanline_iterator::ScanlineIterator, Polyline},
 };
 use crate::{
     geometry::{Dimensions, Point, Size},
     pixelcolor::PixelColor,
     primitives::{
         common::StrokeOffset,
-        polyline::{self, Polyline},
+        polyline::{self},
         styled::{StyledDimensions, StyledPixels},
         PointsIter, PrimitiveStyle, Rectangle,
     },
@@ -70,7 +71,7 @@ pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
 /// Compute the bounding box of the non-translated polyline.
 #[cfg(all(feature = "draw_target_async", not(feature = "draw_target_sync")))]
 pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
-    primitive: &Polyline,
+    primitive: &PolylineAsync,
     style: &PrimitiveStyle<C>,
 ) -> Rectangle {
     if style.effective_stroke_color().is_some() && primitive.vertices.len() > 1 {
@@ -101,7 +102,10 @@ pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            DrawTarget(async = "DrawTargetAsync"),
+            Polyline(async = "PolylineAsync")
+        )
     )
 )]
 async fn draw_thick<D>(
@@ -155,8 +159,11 @@ pub struct StyledPixelsIterator<'a, C> {
 
 #[maybe_async_cfg::maybe(
     idents(StyledIter, Scanline, ScanlineIterator),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(sync = "PolylineAsync"))
+    )
 )]
 impl<'a, C: PixelColor> StyledPixelsIterator<'a, C> {
     pub(in crate::primitives) fn new(primitive: &Polyline<'a>, style: &PrimitiveStyle<C>) -> Self {
@@ -220,10 +227,12 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<'_, C> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(StyledIter, StyledPixelsIterator),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(sync = "PolylineAsync"))
+    )
 )]
 impl<'a, C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Polyline<'a> {
     type Iter = StyledPixelsIterator<'a, C>;
@@ -236,10 +245,13 @@ impl<'a, C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Polyline<'a> {
 #[maybe_async_cfg::maybe(
     keep_self,
     idents(StyledDrawable, draw_thick(fn)),
-    sync(feature = "draw_target_sync"),
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            DrawTarget(async = "DrawTargetAsync"),
+            Polyline(async = "PolylineAsync")
+        )
     )
 )]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Polyline<'_> {
@@ -282,12 +294,26 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Polyline<'_> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Polyline<'_> {
     fn styled_bounding_box(&self, style: &PrimitiveStyle<C>) -> Rectangle {
         untranslated_bounding_box(self, style).translate(self.translate)
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -15,14 +15,19 @@ use crate::primitives::common::{Scanline, StyledScanline};
 #[maybe_async_cfg::maybe(
     idents(StyledDrawable, Scanlines),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
 )]
-use crate::primitives::{rounded_rectangle::points::Scanlines, styled::StyledDrawable};
+use crate::primitives::{
+    rounded_rectangle::{points::Scanlines, RoundedRectangle},
+    styled::StyledDrawable,
+};
 use crate::{
     geometry::{Dimensions, Point},
     pixelcolor::PixelColor,
     primitives::{
-        rounded_rectangle::RoundedRectangle,
         styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle, Rectangle,
     },
@@ -128,10 +133,15 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(StyledPixelsIterator),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
 )]
 impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for RoundedRectangle {
     type Iter = StyledPixelsIterator<C>;
@@ -142,12 +152,17 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for RoundedRectangle {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(StyledDrawable, Scanlines, StyledScanlines, draw_stroke(fn)),
-    sync(feature = "draw_target_sync"),
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(
+            DrawTarget(async = "DrawTargetAsync"),
+            RoundedRectangle(async = "RoundedRectangleAsync")
+        )
     )
 )]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for RoundedRectangle {
@@ -191,6 +206,16 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for RoundedRectangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for RoundedRectangle {
     fn styled_bounding_box(&self, style: &PrimitiveStyle<C>) -> Rectangle {
         let offset = style.outside_stroke_width().saturating_as();
@@ -213,8 +238,14 @@ struct StyledScanlines {
 
 #[maybe_async_cfg::maybe(
     idents(Scanlines),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
 )]
 impl StyledScanlines {
     pub fn new(stroke_area: &RoundedRectangle, fill_area: &RoundedRectangle) -> Self {
@@ -257,6 +288,16 @@ impl Iterator for StyledScanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

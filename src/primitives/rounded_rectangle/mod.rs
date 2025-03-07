@@ -146,6 +146,16 @@ pub use styled::StyledPixelsIterator;
 ///     .draw(&mut display)?;
 /// # Ok::<(), core::convert::Infallible>(())
 /// ```
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct RoundedRectangle {
@@ -156,6 +166,16 @@ pub struct RoundedRectangle {
     pub corners: CornerRadii,
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 impl RoundedRectangle {
     /// Creates a new rounded rectangle with the given corner radii.
     ///
@@ -250,6 +270,16 @@ impl RoundedRectangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 impl OffsetOutline for RoundedRectangle {
     fn offset(&self, offset: i32) -> Self {
         let rectangle = self.rectangle.offset(offset);
@@ -278,13 +308,28 @@ impl OffsetOutline for RoundedRectangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 impl Primitive for RoundedRectangle {}
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(Points),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
 )]
 impl PointsIter for RoundedRectangle {
     type Iter = Points;
@@ -294,6 +339,16 @@ impl PointsIter for RoundedRectangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 impl ContainsPoint for RoundedRectangle {
     fn contains(&self, point: Point) -> bool {
         let rounded_rectangle_contains = RoundedRectangleContains::new(self);
@@ -301,12 +356,32 @@ impl ContainsPoint for RoundedRectangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 impl Dimensions for RoundedRectangle {
     fn bounding_box(&self) -> Rectangle {
         self.rectangle
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 impl Transform for RoundedRectangle {
     /// Translate the rounded rectangle from its current position to a new position by (x, y)
     /// pixels, returning a new `RoundedRectangle`. For a mutating transform, see `translate_mut`.
@@ -438,6 +513,16 @@ impl RoundedRectangleContains {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(
+        feature = "draw_target_sync",
+        idents(RoundedRectangle(sync = "RoundedRectangle"))
+    ),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -62,6 +62,10 @@ pub use styled::StyledPixelsIterator;
 ///     .draw(&mut display)?;
 /// # Ok::<(), core::convert::Infallible>(())
 /// ```
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Ellipse {
@@ -72,6 +76,10 @@ pub struct Ellipse {
     pub size: Size,
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 impl Ellipse {
     /// Create a new ellipse delimited with a top-left point with a specific size
     pub const fn new(top_left: Point, size: Size) -> Self {
@@ -99,6 +107,10 @@ impl Ellipse {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 impl OffsetOutline for Ellipse {
     fn offset(&self, offset: i32) -> Self {
         let size = if offset >= 0 {
@@ -122,13 +134,16 @@ pub(in crate::primitives) fn center_2x(top_left: Point, size: Size) -> Point {
     top_left * 2 + radius
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 impl Primitive for Ellipse {}
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(Points),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
 )]
 impl PointsIter for Ellipse {
     type Iter = Points;
@@ -138,6 +153,10 @@ impl PointsIter for Ellipse {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 impl ContainsPoint for Ellipse {
     fn contains(&self, point: Point) -> bool {
         let ellipse_contains = EllipseContains::new(self.size);
@@ -145,12 +164,20 @@ impl ContainsPoint for Ellipse {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 impl Dimensions for Ellipse {
     fn bounding_box(&self) -> Rectangle {
         Rectangle::new(self.top_left, self.size)
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 impl Transform for Ellipse {
     /// Translate the ellipse from its current position to a new position by (x, y) pixels,
     /// returning a new `Ellipse`. For a mutating transform, see `translate_mut`.
@@ -231,6 +258,10 @@ impl EllipseContains {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
 #[cfg(test)]
 mod tests {
     use super::*;
