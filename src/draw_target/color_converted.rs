@@ -15,7 +15,7 @@ use core::marker::PhantomData;
 /// Created by calling [`color_converted`] on any [`DrawTarget`].
 /// See the [`color_converted`] method documentation for more information.
 ///
-/// [`color_converted`]: crate::draw_target::DrawTargetExt::color_converted
+/// [`color_converted`]: crate::draw_target::DrawTargetExtSync::color_converted
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")

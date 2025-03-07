@@ -96,7 +96,7 @@ pub trait TextRenderer {
 
 /// Text metrics.
 ///
-/// See [`TextRenderer::measure_string`] for more information.
+/// See [`TextRendererSync::measure_string`] for more information.
 ///
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]

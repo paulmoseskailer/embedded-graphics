@@ -24,7 +24,7 @@ use crate::{
 /// Created by calling [`translated`] on any [`DrawTarget`].
 /// See the [`translated`] method documentation for more.
 ///
-/// [`translated`]: crate::draw_target::DrawTargetExt::translated
+/// [`translated`]: crate::draw_target::DrawTargetExtSync::translated
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
     async(

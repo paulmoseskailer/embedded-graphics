@@ -16,7 +16,7 @@ use crate::{
 /// Created by calling [`clipped`] on any [`DrawTarget`].
 /// See the [`clipped`] method documentation for more.
 ///
-/// [`clipped`]: crate::draw_target::DrawTargetExt::clipped
+/// [`clipped`]: crate::draw_target::DrawTargetExtSync::clipped
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
     async(

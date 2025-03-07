@@ -18,7 +18,7 @@ use crate::{
 /// Created by calling [`cropped`] on any [`DrawTarget`].
 /// See the [`cropped`] method documentation for more.
 ///
-/// [`cropped`]: DrawTargetExt::cropped
+/// [`cropped`]: DrawTargetExtSync::cropped
 #[maybe_async_cfg::maybe(
     idents(Translated),
     sync(feature = "draw_target_sync"),

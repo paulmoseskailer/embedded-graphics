@@ -50,7 +50,7 @@
 //!
 //! [`SubImage`]s are used to split a larger image drawables into multiple parts, e.g. to draw a
 //! single sprite from a sprite atlas as in this example. Use the [`sub_image`] method provided by
-//! [`ImageDrawableExt`] to get a sub image from an image drawable. [`ImageDrawableExt`] is included
+//! [`ImageDrawableExtSync`] to get a sub image from an image drawable. [`ImageDrawableExtSync`] is included
 //! in the [`prelude`], which this example takes advantage of.
 //!
 //! ```rust
@@ -91,7 +91,7 @@
 //! [tinytga]: https://crates.io/crates/tinytga
 //! [tinybmp]: https://crates.io/crates/tinybmp
 //! [raw pixel data]: ImageRaw
-//! [`sub_image`]: ImageDrawableExt::sub_image
+//! [`sub_image`]: ImageDrawableExtSync::sub_image
 //! [`OriginDimensions`]: super::geometry::OriginDimensions
 //! [`prelude`]: super::prelude
 
