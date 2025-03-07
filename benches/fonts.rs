@@ -9,11 +9,10 @@ use embedded_graphics::{
     prelude::*,
 };
 #[maybe_async_cfg::maybe(
-    idents(Text),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(Drawable(async = "DrawableAsync"))
+        idents(Drawable(async = "DrawableAsync"), Text(async = "TextAsync"))
     )
 )]
 use embedded_graphics::{text::Text, Drawable};
@@ -23,25 +22,23 @@ mod common;
 use common::Framebuffer;
 
 #[maybe_async_cfg::maybe(
-    idents(Text),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 fn one_line<S>(style: S) -> Text<'static, S> {
     Text::new("Hello world!", Point::new_equal(20), style)
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Text),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 fn three_lines<S>(style: S) -> Text<'static, S> {
     Text::new("line 1\nl2\nThis is line 3", Point::new_equal(20), style)
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Text, one_line(fn), three_lines(fn)),
+    idents(one_line(fn), three_lines(fn)),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
@@ -87,7 +84,7 @@ fn font_6x9(c: &mut Criterion) {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Text, one_line(fn), three_lines(fn)),
+    idents(one_line(fn), three_lines(fn)),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]

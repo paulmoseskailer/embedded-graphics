@@ -7,11 +7,10 @@ use embedded_graphics::{
     text::Baseline,
 };
 #[maybe_async_cfg::maybe(
-    idents(Text),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(Drawable(async = "DrawableAsync"))
+        idents(Drawable(async = "DrawableAsync"), Text(async = "TextAsync"))
     )
 )]
 use embedded_graphics::{text::Text, Drawable};
@@ -19,9 +18,8 @@ use embedded_graphics::{text::Text, Drawable};
 const DATA: &[u8] = &[0xAA, 0x55];
 
 #[maybe_async_cfg::maybe(
-    idents(Text),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 #[test]
 fn custom_font() {

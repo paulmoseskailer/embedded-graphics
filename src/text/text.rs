@@ -35,8 +35,8 @@ use super::TextStyleBuilder;
 ///
 /// See the [module-level documentation](super) for more information about text drawables and examples.
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
@@ -55,8 +55,8 @@ pub struct Text<'a, S> {
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 impl<'a, S> Text<'a, S> {
     /// Creates a text drawable with the default text style.
@@ -116,8 +116,8 @@ impl<'a, S> Text<'a, S> {
 }
 
 #[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 impl<S: Clone> Transform for Text<'_, S> {
     fn translate(&self, by: Point) -> Self {
@@ -136,8 +136,8 @@ impl<S: Clone> Transform for Text<'_, S> {
 
 #[maybe_async_cfg::maybe(
     idents(TextRenderer),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 impl<S: TextRenderer> Text<'_, S> {
     fn line_height(&self) -> i32 {
@@ -186,10 +186,11 @@ impl<S: TextRenderer> Text<'_, S> {
 
 #[maybe_async_cfg::maybe(
     idents(TextRenderer),
-    sync(feature = "draw_target_sync"),
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
     async(
         feature = "draw_target_async",
         idents(
+            Text(async = "TextAsync"),
             Drawable(async = "DrawableAsync"),
             DrawTarget(async = "DrawTargetAsync")
         )
@@ -231,8 +232,8 @@ fn update_min_max(min_max: &mut Option<(Point, Point)>, metrics: &TextMetrics) {
 
 #[maybe_async_cfg::maybe(
     idents(TextRenderer),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 impl<S: TextRenderer> Dimensions for Text<'_, S> {
     fn bounding_box(&self) -> Rectangle {
@@ -254,9 +255,8 @@ impl<S: TextRenderer> Dimensions for Text<'_, S> {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Text),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 #[cfg(test)]
 mod tests {

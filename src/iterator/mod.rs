@@ -48,7 +48,7 @@ where
     C: PixelColor,
 {
     /// Draws the pixel iterator to a draw target.
-    fn draw<D>(self, target: &mut D) -> Result<(), D::Error>
+    async fn draw<D>(self, target: &mut D) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = C>;
 

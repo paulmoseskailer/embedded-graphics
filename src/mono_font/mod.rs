@@ -225,9 +225,8 @@ const NULL_FONT: MonoFont = MonoFont {
 };
 
 #[maybe_async_cfg::maybe(
-    idents(Text),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
+    async(feature = "draw_target_async", idents(Text(async = "TextAsync")))
 )]
 #[cfg(test)]
 pub(crate) mod tests {
