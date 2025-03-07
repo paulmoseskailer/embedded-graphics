@@ -19,18 +19,24 @@ pub use self::rectangle::Rectangle;
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(Triangle(async = "TriangleAsync"))
+        idents(
+            Triangle(async = "TriangleAsync"),
+            Circle(async = "CircleAsync"),
+            Arc(async = "ArcAsync"),
+            Ellipse(async = "EllipseAsync"),
+            Polyline(async = "PolylineAsync"),
+            RoundedRectangle(async = "RoundedRectangleAsync"),
+        )
     )
 )]
-pub use self::triangle::Triangle;
 pub use self::{
-    arc::Arc,
-    circle::Circle,
-    ellipse::Ellipse,
+    arc::Arc, circle::Circle, ellipse::Ellipse, polyline::Polyline,
+    rounded_rectangle::RoundedRectangle, triangle::Triangle,
+};
+pub use self::{
     line::Line,
-    polyline::Polyline,
     primitive_style::{PrimitiveStyle, PrimitiveStyleBuilder, StrokeAlignment},
-    rounded_rectangle::{CornerRadii, CornerRadiiBuilder, RoundedRectangle},
+    rounded_rectangle::{CornerRadii, CornerRadiiBuilder},
     sector::Sector,
 };
 use crate::geometry::{Dimensions, Point};

@@ -6,9 +6,14 @@ use core::ops::Range;
     async(feature = "draw_target_async")
 )]
 use crate::primitives::common::Scanline;
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
+)]
+use crate::primitives::ellipse::Ellipse;
 use crate::{
     geometry::{Dimensions, Point},
-    primitives::ellipse::{Ellipse, EllipseContains},
+    primitives::ellipse::EllipseContains,
 };
 
 /// Iterator over all points inside the ellipse
@@ -27,7 +32,7 @@ pub struct Points {
 #[maybe_async_cfg::maybe(
     idents(Scanline, Scanlines),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
 )]
 impl Points {
     pub(in crate::primitives) fn new(ellipse: &Ellipse) -> Self {
@@ -69,7 +74,7 @@ pub struct Scanlines {
 
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
 )]
 impl Scanlines {
     pub fn new(ellipse: &Ellipse) -> Self {
@@ -109,6 +114,13 @@ impl Iterator for Scanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
+    async(
+        feature = "draw_target_async",
+        idents(Circle(async = "CircleAsync"), Ellipse(async = "EllipseAsync"))
+    )
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

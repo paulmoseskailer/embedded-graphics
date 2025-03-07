@@ -305,6 +305,7 @@ where
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[cfg(test)]
 mod tests {
     use super::*;

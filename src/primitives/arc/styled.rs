@@ -8,6 +8,11 @@
 )]
 use crate::draw_target::{DrawTarget, DrawTargetExt};
 #[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
+use crate::primitives::arc::Arc;
+#[maybe_async_cfg::maybe(
     idents(StyledDrawable),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
@@ -17,7 +22,6 @@ use crate::{
     geometry::Dimensions,
     pixelcolor::PixelColor,
     primitives::{
-        arc::Arc,
         common::{DistanceIterator, PlaneSector},
         styled::{StyledDimensions, StyledPixels},
         OffsetOutline, PrimitiveStyle, Rectangle,
@@ -41,6 +45,11 @@ pub struct StyledPixelsIterator<C> {
     stroke_color: Option<C>,
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 impl<C: PixelColor> StyledPixelsIterator<C> {
     fn new(primitive: &Arc, style: &PrimitiveStyle<C>) -> Self {
         let circle = primitive.to_circle();
@@ -89,7 +98,7 @@ impl<C: PixelColor> Iterator for StyledPixelsIterator<C> {
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(DrawTarget(async = "DrawTargetAsync"), Arc(async = "ArcAsync"))
     )
 )]
 impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Arc {
@@ -110,6 +119,10 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Arc {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Arc {
     type Iter = StyledPixelsIterator<C>;
 
@@ -118,6 +131,10 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for Arc {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Arc {
     // FIXME: This doesn't take into account start/end angles. This should be fixed to close #405.
     fn styled_bounding_box(&self, style: &PrimitiveStyle<C>) -> Rectangle {
@@ -127,6 +144,11 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Arc {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -140,6 +162,11 @@ mod tests {
     use crate::draw_target::DrawTarget;
     #[maybe_async_cfg::maybe(
         sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+    )]
+    use crate::primitives::Circle;
+    #[maybe_async_cfg::maybe(
+        sync(feature = "draw_target_sync"),
         async(
             feature = "draw_target_async",
             idents(Drawable(async = "DrawableAsync"))
@@ -150,7 +177,7 @@ mod tests {
         geometry::{AnchorPoint, AngleUnit, Point, Size},
         mock_display::MockDisplay,
         pixelcolor::BinaryColor,
-        primitives::{Circle, Primitive, PrimitiveStyle, PrimitiveStyleBuilder, StrokeAlignment},
+        primitives::{Primitive, PrimitiveStyle, PrimitiveStyleBuilder, StrokeAlignment},
     };
 
     // Check the rendering of a simple arc

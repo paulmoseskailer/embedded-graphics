@@ -451,6 +451,14 @@ pub(in crate::primitives) struct RoundedRectangleContains {
     bottom_right: EllipseQuadrant,
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    sync(feature = "draw_target_sync"),
+    async(
+        all(feature = "draw_target_async", not(feature = "draw_target_sync")),
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
 impl RoundedRectangleContains {
     pub fn new(rounded_rectangle: &RoundedRectangle) -> Self {
         let top_left = rounded_rectangle.get_confined_corner_quadrant(Quadrant::TopLeft);

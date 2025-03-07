@@ -59,8 +59,17 @@ impl Iterator for DistanceIterator {
 mod tests {
     use super::*;
 
-    use crate::{geometry::Dimensions, primitives::Circle};
+    use crate::geometry::Dimensions;
+    #[maybe_async_cfg::maybe(
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+    )]
+    use crate::primitives::Circle;
 
+    #[maybe_async_cfg::maybe(
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+    )]
     #[test]
     fn distance_iter() {
         let circle = Circle::new(Point::zero(), 3);

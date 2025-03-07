@@ -40,6 +40,7 @@ impl Dimensions for Square {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     keep_self,
     idents(StyledDrawable),
@@ -71,6 +72,7 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Square {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[test]
 fn draw_custom_primitive() {
     let mut display = MockDisplay::new();

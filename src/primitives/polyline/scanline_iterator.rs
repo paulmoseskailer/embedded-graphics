@@ -14,9 +14,17 @@ use crate::primitives::common::Scanline;
     async(feature = "draw_target_async")
 )]
 use crate::primitives::polyline::scanline_intersections::ScanlineIntersections;
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
+use crate::primitives::polyline::Polyline;
 use crate::{
     pixelcolor::PixelColor,
-    primitives::{polyline::styled::untranslated_bounding_box, Polyline, PrimitiveStyle},
+    primitives::{polyline::styled::untranslated_bounding_box, PrimitiveStyle},
 };
 
 /// Iterate over every scanline in the polyline's bounding box.
@@ -38,7 +46,10 @@ pub struct ScanlineIterator<'a> {
 #[maybe_async_cfg::maybe(
     idents(ScanlineIntersections),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
 )]
 impl<'a> ScanlineIterator<'a> {
     /// New.

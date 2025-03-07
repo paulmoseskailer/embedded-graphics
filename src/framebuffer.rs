@@ -330,6 +330,7 @@ impl<C, R, BO, const WIDTH: usize, const HEIGHT: usize, const N: usize> OriginDi
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[cfg(test)]
 mod tests {
     use embedded_graphics_core::prelude::GrayColor;

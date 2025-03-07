@@ -66,7 +66,7 @@ pub struct MonoTextStyle<'a, C> {
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
-        idents(DrawTarget(async = "DrawTargetAsync"))
+        idents(DrawTarget(async = "DrawTargetAsync"), Image(async = "ImageAsync"))
     )
 )]
 impl<'a, C> MonoTextStyle<'a, C>
@@ -569,6 +569,7 @@ where
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
     async(feature = "draw_target_async", idents(Text(async = "TextAsync")))

@@ -76,20 +76,21 @@ pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
 ) -> Rectangle {
     if style.effective_stroke_color().is_some() && primitive.vertices.len() > 1 {
         let (min, max) =
-            ThickSegmentIter::new(primitive.vertices, style.stroke_width, StrokeOffset::None).fold(
-                (
-                    Point::new_equal(core::i32::MAX),
-                    Point::new_equal(core::i32::MIN),
-                ),
-                |(min, max), segment| {
-                    let bb = segment.edges_bounding_box();
-
+            ThickSegmentIterAsync::new(primitive.vertices, style.stroke_width, StrokeOffset::None)
+                .fold(
                     (
-                        min.component_min(bb.top_left),
-                        max.component_max(bb.bottom_right().unwrap_or(bb.top_left)),
-                    )
-                },
-            );
+                        Point::new_equal(core::i32::MAX),
+                        Point::new_equal(core::i32::MIN),
+                    ),
+                    |(min, max), segment| {
+                        let bb = segment.edges_bounding_box();
+
+                        (
+                            min.component_min(bb.top_left),
+                            max.component_max(bb.bottom_right().unwrap_or(bb.top_left)),
+                        )
+                    },
+                );
 
         Rectangle::with_corners(min, max)
     } else {
@@ -307,6 +308,7 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Polyline<'_> {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Polyline(sync = "Polyline"))),
     async(

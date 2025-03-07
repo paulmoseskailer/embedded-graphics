@@ -27,7 +27,10 @@ fn rectangle(c: &mut Criterion) {
 #[maybe_async_cfg::maybe(
     idents(closed_shape_benches(fn)),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
 )]
 fn rounded_rectangle(c: &mut Criterion) {
     closed_shape_benches(c, "rounded rectangle", || {
@@ -38,7 +41,10 @@ fn rounded_rectangle(c: &mut Criterion) {
 #[maybe_async_cfg::maybe(
     idents(closed_shape_benches(fn)),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
 )]
 fn rounded_rectangle_corners(c: &mut Criterion) {
     closed_shape_benches(c, "rounded rectangle corners", || {
@@ -75,7 +81,7 @@ fn triangle(c: &mut Criterion) {
 #[maybe_async_cfg::maybe(
     idents(closed_shape_benches(fn)),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
 )]
 fn circle(c: &mut Criterion) {
     closed_shape_benches(c, "circle", || {
@@ -86,7 +92,7 @@ fn circle(c: &mut Criterion) {
 #[maybe_async_cfg::maybe(
     idents(closed_shape_benches(fn)),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))
 )]
 fn ellipse(c: &mut Criterion) {
     closed_shape_benches(c, "ellipse", || {
@@ -144,7 +150,10 @@ fn line(c: &mut Criterion) {
 #[maybe_async_cfg::maybe(
     idents(open_shape_benches(fn)),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
 )]
 fn polyline(c: &mut Criterion) {
     let points = [
@@ -161,7 +170,7 @@ fn polyline(c: &mut Criterion) {
 #[maybe_async_cfg::maybe(
     idents(open_shape_benches(fn)),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
 )]
 fn arc_150(c: &mut Criterion) {
     open_shape_benches(c, "arc 150°", || {
@@ -177,7 +186,7 @@ fn arc_150(c: &mut Criterion) {
 #[maybe_async_cfg::maybe(
     idents(open_shape_benches(fn)),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
 )]
 fn arc_360(c: &mut Criterion) {
     open_shape_benches(c, "arc 360°", || {
@@ -224,6 +233,7 @@ criterion_group!(
 );
 criterion_main!(primitives);
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
     async(
@@ -299,6 +309,7 @@ where
     group.finish()
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
     async(

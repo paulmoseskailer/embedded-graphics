@@ -222,6 +222,7 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Triangle {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
     async(

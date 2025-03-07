@@ -222,6 +222,7 @@ impl Transform for Line {
 }
 
 /// Pixel iterator for each pixel in the line
+#[cfg(feature = "draw_target_sync")]
 #[cfg(test)]
 mod tests {
     use super::*;

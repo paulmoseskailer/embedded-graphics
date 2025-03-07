@@ -17,9 +17,26 @@ pub struct Points {
     threshold: u32,
 }
 
+#[cfg(feature = "draw_target_sync")]
 impl Points {
     pub(in crate::primitives) fn new(sector: &Sector) -> Self {
-        let circle = sector.to_circle();
+        let circle = sector.to_circle_sync();
+
+        let plane_sector = PlaneSector::new(sector.angle_start, sector.angle_sweep);
+
+        Self {
+            // PERF: The distance iterator should use the smaller sector bounding box
+            iter: circle.distances(),
+            plane_sector,
+            threshold: circle.threshold(),
+        }
+    }
+}
+
+#[cfg(all(feature = "draw_target_async", not(feature = "draw_target_sync")))]
+impl Points {
+    pub(in crate::primitives) fn new(sector: &Sector) -> Self {
+        let circle = sector.to_circle_async();
 
         let plane_sector = PlaneSector::new(sector.angle_start, sector.angle_sweep);
 

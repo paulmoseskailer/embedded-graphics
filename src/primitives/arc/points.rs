@@ -1,7 +1,11 @@
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
+use crate::primitives::arc::Arc;
 use crate::{
     geometry::Point,
     primitives::{
-        arc::Arc,
         common::{DistanceIterator, PlaneSector},
         OffsetOutline,
     },
@@ -19,6 +23,11 @@ pub struct Points {
     inner_threshold: u32,
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 impl Points {
     pub(in crate::primitives) fn new(arc: &Arc) -> Self {
         let outer_circle = arc.to_circle();
@@ -50,6 +59,10 @@ impl Iterator for Points {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

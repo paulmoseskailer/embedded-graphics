@@ -95,6 +95,7 @@ where
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     idents(ImageDrawableExt),
     sync(feature = "draw_target_sync"),

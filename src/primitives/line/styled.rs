@@ -111,6 +111,7 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for Line {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[cfg(test)]
 mod tests {
     use super::*;

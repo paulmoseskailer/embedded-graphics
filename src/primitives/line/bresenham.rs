@@ -218,6 +218,7 @@ pub fn major_length(line: &Line) -> u32 {
     delta.x.max(delta.y) as u32 + 1
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[cfg(test)]
 mod tests {
     use super::*;

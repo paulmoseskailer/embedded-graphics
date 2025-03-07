@@ -37,6 +37,7 @@ fn three_lines<S>(style: S) -> Text<'static, S> {
     Text::new("line 1\nl2\nThis is line 3", Point::new_equal(20), style)
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     idents(one_line(fn), three_lines(fn)),
     sync(feature = "draw_target_sync"),
@@ -83,12 +84,13 @@ fn font_6x9(c: &mut Criterion) {
     group.finish();
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     idents(one_line(fn), three_lines(fn)),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
-fn font_10x20(c: &mut Criterion) {
+async fn font_10x20(c: &mut Criterion) {
     let mut group = c.benchmark_group("font 10x20");
 
     let style = MonoTextStyle::new(&FONT_10X20, Gray8::WHITE);
@@ -131,6 +133,5 @@ fn font_10x20(c: &mut Criterion) {
 
 #[cfg(feature = "draw_target_sync")]
 criterion_group!(fonts, font_6x9_sync, font_10x20_sync);
-#[cfg(feature = "draw_target_async")]
-criterion_group!(fonts, font_6x9_async, font_10x20_async);
+#[cfg(feature = "draw_target_sync")]
 criterion_main!(fonts);

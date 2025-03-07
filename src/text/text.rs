@@ -254,6 +254,7 @@ impl<S: TextRenderer> Dimensions for Text<'_, S> {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
     async(feature = "draw_target_async", idents(Text(async = "TextAsync")))

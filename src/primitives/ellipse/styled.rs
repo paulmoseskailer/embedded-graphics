@@ -253,6 +253,7 @@ impl Iterator for StyledScanlines {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Ellipse(sync = "Ellipse"))),
     async(feature = "draw_target_async", idents(Ellipse(async = "EllipseAsync")))

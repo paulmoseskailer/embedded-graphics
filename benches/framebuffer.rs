@@ -52,6 +52,7 @@ fn framebuffer_get_1bpp(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "draw_target_sync")]
 fn framebuffer_1bpp_draw_iter(c: &mut Criterion) {
     c.bench_function("framebuffer 1bpp draw iter", |b| {
         let mut fb = Framebuffer::<
@@ -109,6 +110,7 @@ fn framebuffer_get_rgb565(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "draw_target_sync")]
 criterion_group!(
     framebuffer,
     framebuffer_set_1bpp,
@@ -116,5 +118,13 @@ criterion_group!(
     framebuffer_set_rgb565,
     framebuffer_get_rgb565,
     framebuffer_1bpp_draw_iter
+);
+#[cfg(all(feature = "draw_target_async", not(feature = "draw_target_sync")))]
+criterion_group!(
+    framebuffer,
+    framebuffer_set_1bpp,
+    framebuffer_get_1bpp,
+    framebuffer_set_rgb565,
+    framebuffer_get_rgb565,
 );
 criterion_main!(framebuffer);

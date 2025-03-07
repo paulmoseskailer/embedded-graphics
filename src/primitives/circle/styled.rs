@@ -55,7 +55,7 @@ pub struct StyledPixelsIterator<C> {
 #[maybe_async_cfg::maybe(
     idents(Scanline, StyledScanlines),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Circle(sync = "CircleAsync")))
 )]
 impl<C: PixelColor> StyledPixelsIterator<C> {
     pub(in crate::primitives) fn new(primitive: &Circle, style: &PrimitiveStyle<C>) -> Self {
@@ -252,6 +252,7 @@ impl Iterator for StyledScanlines {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Circle(sync = "Circle"))),
     async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))

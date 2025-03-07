@@ -16,6 +16,7 @@ use embedded_graphics::{
 
 struct CheckerboardStyle<C>(C, C);
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     keep_self,
     idents(StyledDrawable),
@@ -50,6 +51,7 @@ impl<C: PixelColor> StyledDrawable<CheckerboardStyle<C>> for Rectangle {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[test]
 fn custom_primitive_style() {
     let style = CheckerboardStyle(Rgb888::RED, Rgb888::GREEN);

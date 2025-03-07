@@ -13,6 +13,7 @@ mod common;
 
 use common::Framebuffer;
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
     async(feature = "draw_target_async", idents(Image(async = "ImageAsync")))
@@ -31,6 +32,5 @@ fn image_1bpp(c: &mut Criterion) {
 
 #[cfg(feature = "draw_target_sync")]
 criterion_group!(images, image_1bpp_sync);
-#[cfg(feature = "draw_target_async")]
-criterion_group!(images, image_1bpp_async);
+#[cfg(feature = "draw_target_sync")]
 criterion_main!(images);

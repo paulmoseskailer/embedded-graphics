@@ -1,6 +1,11 @@
 extern crate embedded_graphics;
 
 #[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
+use embedded_graphics::primitives::Circle;
+#[maybe_async_cfg::maybe(
     idents(PixelIteratorExt),
     sync(feature = "draw_target_sync"),
     async(
@@ -12,7 +17,7 @@ use embedded_graphics::{draw_target::DrawTarget, iterator::PixelIteratorExt};
 use embedded_graphics::{
     pixelcolor::raw::RawU1,
     prelude::*,
-    primitives::{Circle, Line, Primitive, PrimitiveStyle, Rectangle},
+    primitives::{Line, Primitive, PrimitiveStyle, Rectangle},
 };
 
 struct FakeDisplay {}
@@ -68,6 +73,7 @@ impl OriginDimensions for FakeDisplay {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[test]
 fn it_supports_chaining() -> Result<(), core::convert::Infallible> {
     let mut display = FakeDisplay {};
@@ -84,6 +90,7 @@ fn it_supports_chaining() -> Result<(), core::convert::Infallible> {
     chained.draw(&mut display)
 }
 
+#[cfg(feature = "draw_target_sync")]
 fn multi() -> impl Iterator<Item = Pixel<TestPixelColor>> {
     let line = Line::new(Point::new(0, 1), Point::new(2, 3))
         .into_styled(PrimitiveStyle::with_stroke(1u8.into(), 1))
@@ -96,6 +103,7 @@ fn multi() -> impl Iterator<Item = Pixel<TestPixelColor>> {
     line.chain(circle)
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[test]
 fn return_from_fn() -> Result<(), core::convert::Infallible> {
     let mut display = FakeDisplay {};

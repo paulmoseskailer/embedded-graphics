@@ -1,8 +1,13 @@
 //! The arc primitive
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
+use crate::primitives::Circle;
 use crate::{
     geometry::{Angle, Dimensions, Point, Size},
-    primitives::{Circle, PointsIter, Primitive, Rectangle},
+    primitives::{PointsIter, Primitive, Rectangle},
     transform::Transform,
 };
 
@@ -43,6 +48,10 @@ pub use styled::StyledPixelsIterator;
 ///     .draw(&mut display)?;
 /// # Ok::<(), core::convert::Infallible>(())
 /// ```
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Arc(sync = "Arc"))),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 #[derive(Copy, Clone, PartialEq, PartialOrd, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Arc {
@@ -59,6 +68,13 @@ pub struct Arc {
     pub angle_sweep: Angle,
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Arc(sync = "Arc"))),
+    async(
+        feature = "draw_target_async",
+        idents(Arc(async = "ArcAsync"), Circle(async = "CircleAsync"))
+    )
+)]
 impl Arc {
     /// Create a new arc delimited with a top-left point with a specific diameter and start and sweep angles
     pub const fn new(
@@ -112,8 +128,16 @@ impl Arc {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Arc(sync = "Arc"))),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 impl Primitive for Arc {}
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Arc(sync = "Arc"))),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 impl PointsIter for Arc {
     type Iter = Points;
 
@@ -122,12 +146,20 @@ impl PointsIter for Arc {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Arc(sync = "Arc"))),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 impl Dimensions for Arc {
     fn bounding_box(&self) -> Rectangle {
         Rectangle::new(self.top_left, Size::new(self.diameter, self.diameter))
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Arc(sync = "Arc"))),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 impl Transform for Arc {
     /// Translate the arc from its current position to a new position by (x, y) pixels,
     /// returning a new `Arc`. For a mutating transform, see `translate_mut`.
@@ -164,6 +196,10 @@ impl Transform for Arc {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync", idents(Arc(sync = "Arc"))),
+    async(feature = "draw_target_async", idents(Arc(async = "ArcAsync")))
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

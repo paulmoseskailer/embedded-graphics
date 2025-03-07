@@ -28,7 +28,7 @@ embedded-graphics = { path = ".." }
 arrayvec = { version = "0.7.2", default-features = false }
 
 [features]
-default = ["draw_target_sync"]
+default = []
 draw_target_sync = []
 draw_target_async = []
 nalgebra_support = [ "nalgebra" ]

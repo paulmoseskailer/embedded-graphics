@@ -1,9 +1,14 @@
 //! The sector primitive
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
+use crate::primitives::Circle;
 use crate::{
     geometry::{Angle, Dimensions, Point, Size},
     primitives::{
-        common::PlaneSector, Circle, ContainsPoint, OffsetOutline, PointsIter, Primitive, Rectangle,
+        common::PlaneSector, ContainsPoint, OffsetOutline, PointsIter, Primitive, Rectangle,
     },
     transform::Transform,
 };
@@ -105,6 +110,10 @@ impl Sector {
     /// Creates an arc based on a circle.
     ///
     /// The resulting sector will match the `top_left` and `diameter` of the base circle.
+    #[maybe_async_cfg::maybe(
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+    )]
     pub const fn from_circle(circle: Circle, angle_start: Angle, angle_sweep: Angle) -> Self {
         Sector {
             top_left: circle.top_left,
@@ -115,6 +124,10 @@ impl Sector {
     }
 
     /// Returns a circle with the same `top_left` and `diameter` as this sector.
+    #[maybe_async_cfg::maybe(
+        sync(feature = "draw_target_sync"),
+        async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+    )]
     pub const fn to_circle(&self) -> Circle {
         Circle::new(self.top_left, self.diameter)
     }
@@ -136,11 +149,21 @@ impl Sector {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 impl OffsetOutline for Sector {
     fn offset(&self, offset: i32) -> Self {
-        let circle = self.to_circle().offset(offset);
+        let circle = self.to_circle_sync().offset(offset);
 
-        Self::from_circle(circle, self.angle_start, self.angle_sweep)
+        Self::from_circle_sync(circle, self.angle_start, self.angle_sweep)
+    }
+}
+
+#[cfg(all(feature = "draw_target_async", not(feature = "draw_target_sync")))]
+impl OffsetOutline for Sector {
+    fn offset(&self, offset: i32) -> Self {
+        let circle = self.to_circle_async().offset(offset);
+
+        Self::from_circle_async(circle, self.angle_start, self.angle_sweep)
     }
 }
 
@@ -154,9 +177,22 @@ impl PointsIter for Sector {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 impl ContainsPoint for Sector {
     fn contains(&self, point: Point) -> bool {
-        if self.to_circle().contains(point) {
+        if self.to_circle_sync().contains(point) {
+            let delta = point * 2 - self.center_2x();
+            PlaneSector::new(self.angle_start, self.angle_sweep).contains(delta)
+        } else {
+            false
+        }
+    }
+}
+
+#[cfg(all(feature = "draw_target_async", not(feature = "draw_target_sync")))]
+impl ContainsPoint for Sector {
+    fn contains(&self, point: Point) -> bool {
+        if self.to_circle_async().contains(point) {
             let delta = point * 2 - self.center_2x();
             PlaneSector::new(self.angle_start, self.angle_sweep).contains(delta)
         } else {

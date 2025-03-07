@@ -187,16 +187,10 @@ where
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[cfg(test)]
 mod tests {
     // NOTE: `crate` cannot be used here due to circular dependency resolution behavior.
-    #[maybe_async_cfg::maybe(
-        sync(feature = "draw_target_sync"),
-        async(
-            feature = "draw_target_async",
-            idents(Drawable(async = "DrawableAsync"))
-        )
-    )]
     use embedded_graphics::{
         geometry::Point, mock_display::MockDisplay, pixelcolor::BinaryColor, Drawable, Pixel,
     };

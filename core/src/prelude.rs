@@ -1,9 +1,18 @@
 //! Prelude
-#[cfg(feature = "draw_target_async")]
-pub use crate::draw_target::DrawTargetAsync;
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(
+        feature = "draw_target_async",
+        idents(
+            DrawTarget(async = "DrawTargetAsync"),
+            Drawable(async = "DrawableAsync"),
+            ImageDrawable(async = "ImageDrawableAsync")
+        )
+    )
+)]
+pub use crate::{draw_target::DrawTarget, drawable::Drawable, image::ImageDrawable};
 #[doc(no_inline)]
 pub use crate::{
-    draw_target::DrawTarget,
     drawable::Pixel,
     geometry::{Dimensions, OriginDimensions, Point, Size},
     pixelcolor::{
@@ -12,14 +21,3 @@ pub use crate::{
     },
     primitives::PointsIter,
 };
-#[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(
-        feature = "draw_target_async",
-        idents(
-            Drawable(async = "DrawableAsync"),
-            ImageDrawable(async = "ImageDrawableAsync")
-        )
-    )
-)]
-pub use crate::{drawable::Drawable, image::ImageDrawable};

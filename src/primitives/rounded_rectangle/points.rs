@@ -4,12 +4,17 @@
     async(feature = "draw_target_async")
 )]
 use crate::primitives::common::Scanline;
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
+)]
+use crate::primitives::rounded_rectangle::RoundedRectangle;
 use crate::{
     geometry::Point,
-    primitives::{
-        rounded_rectangle::{RoundedRectangle, RoundedRectangleContains},
-        ContainsPoint,
-    },
+    primitives::{rounded_rectangle::RoundedRectangleContains, ContainsPoint},
 };
 
 /// Iterator over all points inside the rounded rectangle.
@@ -28,7 +33,10 @@ pub struct Points {
 #[maybe_async_cfg::maybe(
     idents(Scanline, Scanlines),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
 )]
 impl Points {
     pub(in crate::primitives) fn new(rounded_rectangle: &RoundedRectangle) -> Self {
@@ -66,7 +74,10 @@ pub struct Scanlines {
 
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(
+        feature = "draw_target_async",
+        idents(RoundedRectangle(async = "RoundedRectangleAsync"))
+    )
 )]
 impl Scanlines {
     pub fn new(rounded_rectangle: &RoundedRectangle) -> Self {
@@ -123,6 +134,7 @@ impl Iterator for Scanlines {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[cfg(test)]
 mod tests {
     use super::*;

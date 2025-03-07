@@ -17,6 +17,7 @@ use embedded_graphics::{text::Text, Drawable};
 
 const DATA: &[u8] = &[0xAA, 0x55];
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
     async(feature = "draw_target_async", idents(Text(async = "TextAsync")))

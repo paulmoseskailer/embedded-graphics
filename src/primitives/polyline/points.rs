@@ -1,8 +1,15 @@
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
+use crate::primitives::polyline::Polyline;
 use crate::{
     geometry::Point,
     primitives::{
         line::{self, Line},
-        polyline::Polyline,
         PointsIter,
     },
 };
@@ -16,6 +23,14 @@ pub struct Points<'a> {
     segment_iter: line::Points,
 }
 
+#[maybe_async_cfg::maybe(
+    keep_self,
+    sync(feature = "draw_target_sync"),
+    async(
+        feature = "draw_target_async",
+        idents(Polyline(async = "PolylineAsync"))
+    )
+)]
 impl<'a> Points<'a> {
     pub(in crate::primitives) fn new<'b>(polyline: &'b Polyline<'a>) -> Self
     where

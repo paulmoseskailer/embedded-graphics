@@ -47,12 +47,13 @@ pub struct StyledPixelsIterator<C> {
     fill_color: Option<C>,
 }
 
+#[cfg(feature = "draw_target_sync")]
 impl<C: PixelColor> StyledPixelsIterator<C> {
     fn new(primitive: &Sector, style: &PrimitiveStyle<C>) -> Self {
         let stroke_area = style.stroke_area(primitive);
         let fill_area = style.fill_area(primitive);
 
-        let stroke_area_circle = stroke_area.to_circle();
+        let stroke_area_circle = stroke_area.to_circle_sync();
 
         let iter = if !style.is_transparent() {
             // PERF: The distance iterator should use the smaller sector bounding box
@@ -62,7 +63,75 @@ impl<C: PixelColor> StyledPixelsIterator<C> {
         };
 
         let outer_threshold = stroke_area_circle.threshold();
-        let inner_threshold = fill_area.to_circle().threshold();
+        let inner_threshold = fill_area.to_circle_sync().threshold();
+
+        let plane_sector = PlaneSector::new(stroke_area.angle_start, stroke_area.angle_sweep);
+
+        let inside_stroke_width: i32 = style.inside_stroke_width().saturating_as();
+        let outside_stroke_width: i32 = style.outside_stroke_width().saturating_as();
+
+        let stroke_threshold_inside =
+            inside_stroke_width * NORMAL_VECTOR_SCALE * 2 - NORMAL_VECTOR_SCALE;
+        let stroke_threshold_outside =
+            outside_stroke_width * NORMAL_VECTOR_SCALE * 2 + NORMAL_VECTOR_SCALE;
+
+        // TODO: Polylines and sectors should use the same miter limit.
+        let angle_sweep_abs = primitive.angle_sweep.abs();
+        let exterior_bevel = angle_sweep_abs < Angle::from_degrees(55.0);
+        let interior_bevel = angle_sweep_abs > Angle::from_degrees(360.0 - 55.0)
+            && angle_sweep_abs < Angle::from_degrees(360.0);
+
+        let bevel = if exterior_bevel || interior_bevel {
+            let half_sweep = primitive.angle_start
+                + Angle::from_radians(primitive.angle_sweep.to_radians() / 2.0);
+            let threshold = -outside_stroke_width * NORMAL_VECTOR_SCALE * 4;
+
+            if interior_bevel {
+                Some((
+                    BevelKind::Interior,
+                    LinearEquation::with_angle_and_distance(half_sweep + ANGLE_90DEG, threshold),
+                ))
+            } else {
+                Some((
+                    BevelKind::Exterior,
+                    LinearEquation::with_angle_and_distance(half_sweep - ANGLE_90DEG, threshold),
+                ))
+            }
+        } else {
+            None
+        };
+
+        Self {
+            iter,
+            plane_sector,
+            outer_threshold,
+            inner_threshold,
+            stroke_threshold_inside,
+            stroke_threshold_outside,
+            bevel,
+            stroke_color: style.stroke_color,
+            fill_color: style.fill_color,
+        }
+    }
+}
+
+#[cfg(all(feature = "draw_target_async", not(feature = "draw_target_sync")))]
+impl<C: PixelColor> StyledPixelsIterator<C> {
+    fn new(primitive: &Sector, style: &PrimitiveStyle<C>) -> Self {
+        let stroke_area = style.stroke_area(primitive);
+        let fill_area = style.fill_area(primitive);
+
+        let stroke_area_circle = stroke_area.to_circle_async();
+
+        let iter = if !style.is_transparent() {
+            // PERF: The distance iterator should use the smaller sector bounding box
+            stroke_area_circle.distances()
+        } else {
+            DistanceIterator::empty()
+        };
+
+        let outer_threshold = stroke_area_circle.threshold();
+        let inner_threshold = fill_area.to_circle_async().threshold();
 
         let plane_sector = PlaneSector::new(stroke_area.angle_start, stroke_area.angle_sweep);
 
@@ -215,6 +284,7 @@ enum BevelKind {
     Exterior,
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[cfg(test)]
 mod tests {
     use super::*;

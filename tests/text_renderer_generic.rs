@@ -36,6 +36,7 @@ struct GenericTextStyle<C>(C);
         idents(DrawTarget(async = "DrawTargetAsync"))
     )
 )]
+#[cfg(feature = "draw_target_sync")]
 impl<C: PixelColor> TextRenderer for GenericTextStyle<C> {
     type Color = C;
 
@@ -85,6 +86,7 @@ impl<C: PixelColor> TextRenderer for GenericTextStyle<C> {
     }
 }
 
+#[cfg(feature = "draw_target_sync")]
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync", idents(Text(sync = "Text"))),
     async(feature = "draw_target_async", idents(Text(async = "TextAsync")))

@@ -1,15 +1,17 @@
 use core::ops::Range;
 
+use crate::geometry::{Dimensions, Point, PointExt};
 #[maybe_async_cfg::maybe(
     idents(Scanline),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
 use crate::primitives::common::Scanline;
-use crate::{
-    geometry::{Dimensions, Point, PointExt},
-    primitives::circle::Circle,
-};
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
+use crate::primitives::Circle;
 
 /// Iterator over all points inside the circle.
 #[maybe_async_cfg::maybe(
@@ -27,7 +29,7 @@ pub struct Points {
 #[maybe_async_cfg::maybe(
     idents(Scanline, Scanlines),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Circle(sync = "CircleAsync")))
 )]
 impl Points {
     pub(in crate::primitives) fn new(circle: &Circle) -> Self {
@@ -68,7 +70,7 @@ pub struct Scanlines {
 
 #[maybe_async_cfg::maybe(
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
+    async(feature = "draw_target_async", idents(Circle(sync = "CircleAsync")))
 )]
 impl Scanlines {
     pub fn new(circle: &Circle) -> Self {
@@ -106,6 +108,10 @@ impl Iterator for Scanlines {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async", idents(Circle(async = "CircleAsync")))
+)]
 #[cfg(test)]
 mod tests {
     use super::*;
