@@ -10,6 +10,10 @@ use embedded_graphics_core::image::ImageDrawable;
 use embedded_graphics_core::primitives::Rectangle;
 
 /// Extension trait for image drawables.
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub trait ImageDrawableExt: Sized {
     /// Returns a sub image of this image drawable.
     ///
@@ -50,6 +54,7 @@ pub trait ImageDrawableExt: Sized {
 
 #[maybe_async_cfg::maybe(
     keep_self,
+    idents(ImageDrawableExt),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",

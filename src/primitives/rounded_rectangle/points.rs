@@ -14,7 +14,7 @@ use crate::{
 
 /// Iterator over all points inside the rounded rectangle.
 #[maybe_async_cfg::maybe(
-    idents(Scanline),
+    idents(Scanline, Scanlines),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
@@ -26,7 +26,7 @@ pub struct Points {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Scanline),
+    idents(Scanline, Scanlines),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
@@ -54,12 +54,20 @@ impl Iterator for Points {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Scanlines {
     rounded_rectangle: RoundedRectangleContains,
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl Scanlines {
     pub fn new(rounded_rectangle: &RoundedRectangle) -> Self {
         Self {
@@ -69,7 +77,6 @@ impl Scanlines {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(Scanline),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")

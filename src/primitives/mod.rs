@@ -40,7 +40,8 @@ pub use embedded_graphics_core::primitives::PointsIter;
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
-pub use styled::{Styled, StyledDimensions, StyledDrawable};
+pub use styled::StyledDrawable;
+pub use styled::{Styled, StyledDimensions};
 
 /// Primitive trait
 pub trait Primitive: Dimensions {

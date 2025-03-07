@@ -1,21 +1,19 @@
 #[maybe_async_cfg::maybe(
-    idents(Scanline),
+    idents(Scanline, ScanlineIterator),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
         idents(Triangle(async = "TriangleAsync"))
     )
 )]
-use crate::primitives::{common::Scanline, triangle::Triangle};
+use crate::primitives::{
+    common::Scanline,
+    triangle::{scanline_iterator::ScanlineIterator, Triangle},
+};
 
-#[maybe_async_cfg::maybe(
-    idents(ScanlineIterator),
-    sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async")
-)]
 use crate::{
     geometry::{Dimensions, Point},
-    primitives::{common::StrokeOffset, triangle::scanline_iterator::ScanlineIterator},
+    primitives::common::StrokeOffset,
 };
 
 /// Iterator over all points inside the triangle.

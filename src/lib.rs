@@ -315,4 +315,5 @@ pub mod transform;
         idents(Drawable(async = "DrawableAsync"))
     )
 )]
-pub use embedded_graphics_core::{pixelcolor, Drawable, Pixel};
+pub use embedded_graphics_core::Drawable;
+pub use embedded_graphics_core::{pixelcolor, Pixel};

@@ -3,12 +3,17 @@
 #[maybe_async_cfg::maybe(
     idents(Scanline, ScanlineIntersections),
     sync(feature = "draw_target_sync"),
-    async(feature = "draw_target_async", idents(Triangle(async = "Triangle")))
+    async(
+        feature = "draw_target_async",
+        idents(Triangle(async = "TriangleAsync"))
+    )
 )]
 use crate::primitives::{
-    common::{PointType, Scanline, StrokeOffset},
-    triangle::scanline_intersections::ScanlineIntersections,
-    Rectangle, Triangle,
+    common::Scanline, triangle::scanline_intersections::ScanlineIntersections, Triangle,
+};
+use crate::primitives::{
+    common::{PointType, StrokeOffset},
+    Rectangle,
 };
 use core::ops::Range;
 

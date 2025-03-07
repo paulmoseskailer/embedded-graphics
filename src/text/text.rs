@@ -34,6 +34,10 @@ use super::TextStyleBuilder;
 /// A text drawable can be used to draw text to a draw target.
 ///
 /// See the [module-level documentation](super) for more information about text drawables and examples.
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct Text<'a, S> {
@@ -50,6 +54,10 @@ pub struct Text<'a, S> {
     pub text_style: TextStyle,
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a, S> Text<'a, S> {
     /// Creates a text drawable with the default text style.
     pub const fn new(text: &'a str, position: Point, character_style: S) -> Self {
@@ -107,6 +115,10 @@ impl<'a, S> Text<'a, S> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<S: Clone> Transform for Text<'_, S> {
     fn translate(&self, by: Point) -> Self {
         Self {
@@ -123,7 +135,6 @@ impl<S: Clone> Transform for Text<'_, S> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(TextRenderer),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
@@ -174,7 +185,6 @@ impl<S: TextRenderer> Text<'_, S> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(TextRenderer),
     sync(feature = "draw_target_sync"),
     async(
@@ -220,7 +230,6 @@ fn update_min_max(min_max: &mut Option<(Point, Point)>, metrics: &TextMetrics) {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(TextRenderer),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
@@ -244,6 +253,11 @@ impl<S: TextRenderer> Dimensions for Text<'_, S> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

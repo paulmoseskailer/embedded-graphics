@@ -8,6 +8,11 @@ mod styled_scanline;
 mod thick_segment;
 mod thick_segment_iter;
 
+#[maybe_async_cfg::maybe(
+    idents(ClosedThickSegmentIter),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use closed_thick_segment_iter::ClosedThickSegmentIter;
 pub use distance_iterator::DistanceIterator;
 pub use line_join::{JoinKind, LineJoin};
@@ -31,6 +36,11 @@ pub use styled_scanline::StyledScanline;
     async(feature = "draw_target_async")
 )]
 pub use thick_segment::ThickSegment;
+#[maybe_async_cfg::maybe(
+    idents(ThickSegmentIter),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use thick_segment_iter::ThickSegmentIter;
 
 use crate::primitives::StrokeAlignment;

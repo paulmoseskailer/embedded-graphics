@@ -108,6 +108,11 @@ pub use embedded_graphics_core::image::GetPixel;
     )
 )]
 pub use embedded_graphics_core::image::ImageDrawable;
+#[maybe_async_cfg::maybe(
+    idents(ImageDrawableExt),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub use image_drawable_ext::ImageDrawableExt;
 pub use image_raw::{ImageRaw, ImageRawBE, ImageRawError, ImageRawLE};
 pub use sub_image::SubImage;
@@ -123,12 +128,14 @@ pub use sub_image::SubImage;
         )
     )
 )]
-use crate::draw_target::{DrawTarget, DrawTargetExt};
+use crate::{
+    draw_target::{DrawTarget, DrawTargetExt},
+    Drawable,
+};
 use crate::{
     geometry::{Dimensions, OriginDimensions, Point},
     primitives::Rectangle,
     transform::Transform,
-    Drawable,
 };
 use core::fmt::Debug;
 

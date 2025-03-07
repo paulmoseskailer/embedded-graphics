@@ -1,22 +1,28 @@
-#[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(
-        feature = "draw_target_async",
-        idents(Drawable(async = "DrawableAsync"))
-    )
-)]
-use embedded_graphics::Drawable;
 use embedded_graphics::{
     image::ImageRaw,
     mock_display::MockDisplay,
     mono_font::{mapping::StrGlyphMapping, DecorationDimensions, MonoFont, MonoTextStyle},
     pixelcolor::BinaryColor,
     prelude::*,
-    text::{Baseline, Text},
+    text::Baseline,
 };
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(
+        feature = "draw_target_async",
+        idents(Drawable(async = "DrawableAsync"))
+    )
+)]
+use embedded_graphics::{text::Text, Drawable};
 
 const DATA: &[u8] = &[0xAA, 0x55];
 
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[test]
 fn custom_font() {
     let mapping = StrGlyphMapping::new("01", 0);

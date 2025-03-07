@@ -13,20 +13,23 @@ use crate::draw_target::DrawTarget;
 )]
 use crate::primitives::styled::StyledDrawable;
 #[maybe_async_cfg::maybe(
-    idents(Scanline, ScanlineIterator),
+    idents(Scanline, ClosedThickSegmentIter, ScanlineIterator),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
         idents(Triangle(async = "TriangleAsync"))
     )
 )]
+use crate::primitives::{
+    common::{ClosedThickSegmentIter, Scanline},
+    triangle::{scanline_iterator::ScanlineIterator, Triangle},
+};
 use crate::{
     geometry::{Dimensions, Point},
     pixelcolor::PixelColor,
     primitives::{
-        common::{ClosedThickSegmentIter, PointType, Scanline, StrokeOffset},
+        common::{PointType, StrokeOffset},
         styled::{StyledDimensions, StyledPixels},
-        triangle::{scanline_iterator::ScanlineIterator, Triangle},
         PrimitiveStyle, Rectangle, StrokeAlignment,
     },
     Pixel,
@@ -179,6 +182,7 @@ impl<C: PixelColor> StyledDrawable<PrimitiveStyle<C>> for Triangle {
 }
 
 #[maybe_async_cfg::maybe(
+    idents(ClosedThickSegmentIter),
     sync(feature = "draw_target_sync", idents(Triangle(sync = "Triangle"))),
     async(
         feature = "draw_target_async",

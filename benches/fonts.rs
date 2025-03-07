@@ -1,12 +1,4 @@
 use criterion::*;
-#[maybe_async_cfg::maybe(
-    sync(feature = "draw_target_sync"),
-    async(
-        feature = "draw_target_async",
-        idents(Drawable(async = "DrawableAsync"))
-    )
-)]
-use embedded_graphics::Drawable;
 use embedded_graphics::{
     geometry::Point,
     mono_font::{
@@ -15,21 +7,44 @@ use embedded_graphics::{
     },
     pixelcolor::Gray8,
     prelude::*,
-    text::Text,
 };
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(
+        feature = "draw_target_async",
+        idents(Drawable(async = "DrawableAsync"))
+    )
+)]
+use embedded_graphics::{text::Text, Drawable};
 
 mod common;
 
 use common::Framebuffer;
 
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn one_line<S>(style: S) -> Text<'static, S> {
     Text::new("Hello world!", Point::new_equal(20), style)
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn three_lines<S>(style: S) -> Text<'static, S> {
     Text::new("line 1\nl2\nThis is line 3", Point::new_equal(20), style)
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Text, one_line(fn), three_lines(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn font_6x9(c: &mut Criterion) {
     let mut group = c.benchmark_group("font 6x9");
 
@@ -71,6 +86,11 @@ fn font_6x9(c: &mut Criterion) {
     group.finish();
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Text, one_line(fn), three_lines(fn)),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 fn font_10x20(c: &mut Criterion) {
     let mut group = c.benchmark_group("font 10x20");
 
@@ -112,5 +132,8 @@ fn font_10x20(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(fonts, font_6x9, font_10x20);
+#[cfg(feature = "draw_target_sync")]
+criterion_group!(fonts, font_6x9_sync, font_10x20_sync);
+#[cfg(feature = "draw_target_async")]
+criterion_group!(fonts, font_6x9_async, font_10x20_async);
 criterion_main!(fonts);

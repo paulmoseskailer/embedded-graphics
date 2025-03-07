@@ -1,9 +1,15 @@
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
+use embedded_graphics::text::Text;
 use embedded_graphics::{
     mock_display::MockDisplay,
     pixelcolor::Rgb888,
     prelude::*,
     primitives::Rectangle,
-    text::{renderer::TextMetrics, Baseline, Text},
+    text::{renderer::TextMetrics, Baseline},
 };
 
 #[maybe_async_cfg::maybe(
@@ -80,6 +86,11 @@ impl<C: PixelColor> TextRenderer for GenericTextStyle<C> {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[test]
 fn generic_text_renderer() {
     let mut target = MockDisplay::new();

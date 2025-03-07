@@ -1,3 +1,5 @@
+use maybe_async_cfg::maybe;
+
 #[maybe_async_cfg::maybe(
     idents(DrawTargetExt),
     sync(feature = "draw_target_sync"),
@@ -14,16 +16,19 @@ use crate::draw_target::{DrawTarget, DrawTargetExt};
 )]
 use crate::primitives::styled::StyledDrawable;
 #[maybe_async_cfg::maybe(
-    idents(Scanline, ScanlineIterator),
+    idents(Scanline, ScanlineIterator, ThickSegmentIter),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
-use crate::primitives::{common::Scanline, polyline::scanline_iterator::ScanlineIterator};
+use crate::primitives::{
+    common::{Scanline, ThickSegmentIter},
+    polyline::scanline_iterator::ScanlineIterator,
+};
 use crate::{
     geometry::{Dimensions, Point, Size},
     pixelcolor::PixelColor,
     primitives::{
-        common::{StrokeOffset, ThickSegmentIter},
+        common::StrokeOffset,
         polyline::{self, Polyline},
         styled::{StyledDimensions, StyledPixels},
         PointsIter, PrimitiveStyle, Rectangle,
@@ -33,6 +38,37 @@ use crate::{
 };
 
 /// Compute the bounding box of the non-translated polyline.
+#[cfg(feature = "draw_target_sync")]
+pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
+    primitive: &Polyline,
+    style: &PrimitiveStyle<C>,
+) -> Rectangle {
+    if style.effective_stroke_color().is_some() && primitive.vertices.len() > 1 {
+        let (min, max) =
+            ThickSegmentIterSync::new(primitive.vertices, style.stroke_width, StrokeOffset::None)
+                .fold(
+                    (
+                        Point::new_equal(core::i32::MAX),
+                        Point::new_equal(core::i32::MIN),
+                    ),
+                    |(min, max), segment| {
+                        let bb = segment.edges_bounding_box();
+
+                        (
+                            min.component_min(bb.top_left),
+                            max.component_max(bb.bottom_right().unwrap_or(bb.top_left)),
+                        )
+                    },
+                );
+
+        Rectangle::with_corners(min, max)
+    } else {
+        Rectangle::new(primitive.bounding_box().center(), Size::zero())
+    }
+}
+
+/// Compute the bounding box of the non-translated polyline.
+#[cfg(all(feature = "draw_target_async", not(feature = "draw_target_sync")))]
 pub(in crate::primitives::polyline) fn untranslated_bounding_box<C: PixelColor>(
     primitive: &Polyline,
     style: &PrimitiveStyle<C>,

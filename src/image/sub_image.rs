@@ -95,6 +95,11 @@ where
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(ImageDrawableExt),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[cfg(test)]
 mod tests {
     use super::*;

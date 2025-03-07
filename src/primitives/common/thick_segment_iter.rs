@@ -17,6 +17,10 @@ use crate::{
 /// for each segment. These are tessellated and are used to produce scanline intersections.
 ///
 /// [`ThickSegment`]: super::thick_segment::ThickSegment
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct ThickSegmentIter<'a> {
@@ -31,6 +35,10 @@ pub struct ThickSegmentIter<'a> {
 
 static EMPTY: &[Point; 0] = &[];
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a> ThickSegmentIter<'a> {
     /// Create a new thick segments iterator.
     pub fn new(points: &'a [Point], width: u32, _stroke_offset: StrokeOffset) -> Self {
@@ -88,7 +96,6 @@ impl<'a> ThickSegmentIter<'a> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(ThickSegment),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")

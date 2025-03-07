@@ -6,7 +6,6 @@ pub use crate::draw_target::DrawTargetAsync;
 pub use crate::{
     draw_target::DrawTarget,
     geometry::{Angle, AngleUnit, Dimensions, OriginDimensions, Point, Size},
-    image::ImageDrawableExt,
     iterator::ContiguousIteratorExt,
     pixelcolor::{
         raw::{RawData, ToBytes as _},
@@ -17,8 +16,7 @@ pub use crate::{
     Pixel,
 };
 #[maybe_async_cfg::maybe(
-    idents(DrawTargetExt),
-    idents(PixelIteratorExt),
+    idents(DrawTargetExt, PixelIteratorExt, ImageDrawableExt),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
@@ -30,5 +28,6 @@ pub use crate::{
     )
 )]
 pub use crate::{
-    draw_target::DrawTargetExt, image::ImageDrawable, iterator::PixelIteratorExt, Drawable,
+    draw_target::DrawTargetExt, image::ImageDrawable, image::ImageDrawableExt,
+    iterator::PixelIteratorExt, Drawable,
 };

@@ -11,13 +11,16 @@ use crate::{
     primitives::Rectangle, Pixel,
 };
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 pub struct MonoFontDrawTarget<'a, T, C> {
     parent: &'a mut T,
     colors: C,
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
@@ -31,7 +34,6 @@ impl<'a, T: DrawTarget, C> MonoFontDrawTarget<'a, T, C> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
@@ -83,7 +85,6 @@ impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Foreground<T::Color
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
@@ -135,7 +136,6 @@ impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Background<T::Color
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
@@ -188,7 +188,6 @@ impl<T: DrawTarget> DrawTarget for MonoFontDrawTarget<'_, T, Both<T::Color>> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",

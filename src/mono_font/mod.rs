@@ -224,6 +224,11 @@ const NULL_FONT: MonoFont = MonoFont {
     glyph_mapping: &mapping::ASCII,
 };
 
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[cfg(test)]
 pub(crate) mod tests {
     use arrayvec::ArrayString;

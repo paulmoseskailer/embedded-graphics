@@ -13,16 +13,16 @@ use crate::draw_target::DrawTarget;
 )]
 use crate::primitives::common::{Scanline, StyledScanline};
 #[maybe_async_cfg::maybe(
-    idents(StyledDrawable),
+    idents(StyledDrawable, Scanlines),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
-use crate::primitives::styled::StyledDrawable;
+use crate::primitives::{rounded_rectangle::points::Scanlines, styled::StyledDrawable};
 use crate::{
     geometry::{Dimensions, Point},
     pixelcolor::PixelColor,
     primitives::{
-        rounded_rectangle::{points::Scanlines, RoundedRectangle},
+        rounded_rectangle::RoundedRectangle,
         styled::{StyledDimensions, StyledPixels},
         PrimitiveStyle, Rectangle,
     },
@@ -34,7 +34,7 @@ use super::RoundedRectangleContains;
 
 /// Pixel iterator for each pixel in the rect border
 #[maybe_async_cfg::maybe(
-    idents(Scanline),
+    idents(Scanline, StyledScanlines),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
@@ -52,7 +52,7 @@ pub struct StyledPixelsIterator<C> {
 }
 
 #[maybe_async_cfg::maybe(
-    idents(Scanline),
+    idents(Scanline, StyledScanlines),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")
 )]
@@ -143,7 +143,7 @@ impl<C: PixelColor> StyledPixels<PrimitiveStyle<C>> for RoundedRectangle {
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(StyledDrawable, draw_stroke(fn)),
+    idents(StyledDrawable, Scanlines, StyledScanlines, draw_stroke(fn)),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
@@ -199,6 +199,11 @@ impl<C: PixelColor> StyledDimensions<PrimitiveStyle<C>> for RoundedRectangle {
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanlines),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 struct StyledScanlines {
@@ -206,6 +211,11 @@ struct StyledScanlines {
     fill_area: RoundedRectangleContains,
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Scanlines),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl StyledScanlines {
     pub fn new(stroke_area: &RoundedRectangle, fill_area: &RoundedRectangle) -> Self {
         Self {
@@ -216,7 +226,6 @@ impl StyledScanlines {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(StyledScanline),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")

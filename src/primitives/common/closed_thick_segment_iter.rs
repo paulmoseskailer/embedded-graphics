@@ -21,6 +21,10 @@ use crate::{
 ///
 /// [`ThickSegment`]: super::thick_segment::ThickSegment
 /// [`ThickSegmentIter`]: super::thick_segment_iter::ThickSegmentIter
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "defmt", derive(::defmt::Format))]
 pub struct ClosedThickSegmentIter<'a> {
@@ -36,6 +40,10 @@ pub struct ClosedThickSegmentIter<'a> {
 
 static EMPTY: &[Point; 0] = &[];
 
+#[maybe_async_cfg::maybe(
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 impl<'a> ClosedThickSegmentIter<'a> {
     /// Create a new thick segments iterator.
     pub fn new(points: &'a [Point], width: u32, stroke_offset: StrokeOffset) -> Self {
@@ -95,7 +103,6 @@ impl<'a> ClosedThickSegmentIter<'a> {
 }
 
 #[maybe_async_cfg::maybe(
-    keep_self,
     idents(ThickSegment),
     sync(feature = "draw_target_sync"),
     async(feature = "draw_target_async")

@@ -1,5 +1,5 @@
 #[maybe_async_cfg::maybe(
-    idents(TextRenderer),
+    idents(TextRenderer, MonoFontDrawTarget),
     sync(feature = "draw_target_sync", idents(Image(sync = "Image"))),
     async(
         feature = "draw_target_async",
@@ -10,11 +10,14 @@
         )
     )
 )]
-use crate::{draw_target::DrawTarget, image::Image, text::renderer::TextRenderer, Drawable};
+use crate::{
+    draw_target::DrawTarget, image::Image, mono_font::draw_target::MonoFontDrawTarget,
+    text::renderer::TextRenderer, Drawable,
+};
 use crate::{
     geometry::{Point, Size},
     mono_font::{
-        draw_target::{Background, Both, Foreground, MonoFontDrawTarget},
+        draw_target::{Background, Both, Foreground},
         MonoFont,
     },
     pixelcolor::{BinaryColor, PixelColor},
@@ -206,7 +209,7 @@ where
 
 #[maybe_async_cfg::maybe(
     keep_self,
-    idents(TextRenderer),
+    idents(TextRenderer, MonoFontDrawTarget),
     sync(feature = "draw_target_sync"),
     async(
         feature = "draw_target_async",
@@ -566,6 +569,11 @@ where
     }
 }
 
+#[maybe_async_cfg::maybe(
+    idents(Text),
+    sync(feature = "draw_target_sync"),
+    async(feature = "draw_target_async")
+)]
 #[cfg(test)]
 mod tests {
     use super::*;
